@@ -66,3 +66,63 @@ section
 		li Float, Double
 		li Bool (True, False) (алгебраический тип)
 		li Char
+
+section
+	h2 Типы (:set +t)
+	pre
+		code.haskell.
+			> :set +t
+			> 42
+			42 it :: Integer
+
+			> 3.1415
+			> True
+
+			> :t 42
+			42 :: Num a => a
+				(параметрический, специальный (ad hoc) полиморфизм)
+
+			42 + 1.2
+			it :: Double
+
+			> :t 42 + 8.2
+			42 + 8.2 :: Fractional a => a
+
+section
+	h3 Функции
+	pre
+		code.haskell.
+			> succ 9
+			10
+			> max 2.5 5.6
+			5.6
+			> 2 + max 2.5 5.6 + min 3.4 (succ 4)
+			11.0
+			> 2 + (max 2.5 5.6) + (min 3.4 (succ 4))
+
+			Ассоциативность слева, справа
+
+			2 ** 2 ** 3 / (2 ** 2) ** 3/  2 ** (2 ** 3)
+			2 - 2 – 2  ?
+
+section
+	h3 Функции
+	p Напишите выражение, высчитывающее минимальное число среди 10, 2, 5, -1, 99
+
+section
+	h3 Опять факториал
+	p lab1.hs
+	pre
+		code.haskell.
+			fac 0 = 1
+			fac n = n * fac (n-1)
+	p console
+	pre
+		code.haskell.
+			> ghci
+			> :load ~lab1.hs
+			> fac 6
+			720
+			> let a = 20
+			> fac a
+			2432902008176640000
