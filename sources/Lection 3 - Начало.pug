@@ -1,0 +1,68 @@
+section
+	h2 Haskell
+	ul
+		li Лаконичность
+		li Строгая типизация
+		li Модульность
+		li Функции — объекты первого порядка
+		li Отсутствие побочных эффектов
+		li Ленивые вычисления
+
+section
+	h2 Синтаксис. Числа.
+	pre
+		code.haskell.
+			> 2 + 2
+			4
+
+			> 6 / 5
+			1.2
+
+			> 6 / -5
+			Precedence parsing error
+				cannot mix `/' [infixl 7] and prefix `-' [infixl 6]
+				in the same infix expression
+			> 6 / (-5)
+			-1.2
+
+section
+	h2 Синтаксис. Булеан.
+	pre
+		code.haskell.
+			> True || False
+			True
+
+			> True && False
+			False
+
+			> not False
+			True
+
+			> 2 * 2 == 4
+			True
+
+			> 2 * 2 /= 5
+			True
+
+			> 2 == "два"	?
+
+section
+	h2 Это вам не js и не python
+	pre
+		code.
+			<interactive>:56:1:
+			No instance for (Num [Char])
+				arising from the literal `2'
+			Possible fix: add an instance declaration for (Num [Char])
+			In the first argument of `(==)', namely `2'
+			In the expression: 2 == "sad"
+			In an equation for `it': it = 2 == "sad"
+
+section
+	h2 Типы (:set +t)
+	p Всегда с большой буквы
+	ul
+		li Integer, Int
+		li Float, Double
+		li Bool (True, False) (алгебраический тип)
+		li Char
