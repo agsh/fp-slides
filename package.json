@@ -1,0 +1,20 @@
+{
+  "name": "hs-lec",
+  "version": "0.0.1",
+  "description": "MEPhI Haskell lections",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Andrew D.Laptev <a.d.laptev@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "reveal": "0.0.4"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-pug": "^3.0.4",
+    "gulp-reveal": "^1.0.0",
+    "webpack": "^1.13.2"
+  }
+}
