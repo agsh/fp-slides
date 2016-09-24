@@ -1,5 +1,5 @@
 section
-	h2 Haskell
+	h4 Haskell
 	ul
 		li Лаконичность
 		li Строгая типизация
@@ -9,7 +9,7 @@ section
 		li Ленивые вычисления
 
 section
-	h2 Синтаксис. Числа.
+	h4 Синтаксис. Числа.
 	pre
 		code.haskell.
 			> 2 + 2
@@ -26,7 +26,7 @@ section
 			-1.2
 
 section
-	h2 Синтаксис. Булеан.
+	h4 Синтаксис. Булеан.
 	pre
 		code.haskell.
 			> True || False
@@ -43,11 +43,11 @@ section
 
 			> 2 * 2 /= 5
 			True
-
+		code.haskell.fragment.
 			> 2 == "два"	?
 
 section
-	h2 Это вам не js и не python
+	h4 Это вам не js и не c
 	pre
 		code.
 			<interactive>:56:1:
@@ -59,7 +59,7 @@ section
 			In an equation for `it': it = 2 == "sad"
 
 section
-	h2 Типы (:set +t)
+	h4 Типы (:set +t)
 	p Всегда с большой буквы
 	ul
 		li Integer, Int
@@ -68,7 +68,7 @@ section
 		li Char
 
 section
-	h2 Типы (:set +t)
+	h4 Типы (:set +t)
 	pre
 		code.haskell.
 			> :set +t
@@ -89,7 +89,7 @@ section
 			42 + 8.2 :: Fractional a => a
 
 section
-	h3 Функции
+	h4 Функции
 	pre
 		code.haskell.
 			> succ 9
@@ -106,11 +106,11 @@ section
 			2 - 2 – 2  ?
 
 section
-	h3 Функции
+	h4 Функции
 	p Напишите выражение, высчитывающее минимальное число среди 10, 2, 5, -1, 99
 
 section
-	h3 Опять факториал
+	h4 Опять факториал
 	p lab1.hs
 	pre
 		code.haskell.
@@ -126,3 +126,73 @@ section
 			> let a = 20
 			> fac a
 			2432902008176640000
+
+section
+	h4 Что происходит
+	ul
+		li Математика
+		// Определение функции похоже на математическое определение факториала
+		li.fragment Рассуждение
+		// Рассуждение о программах: доказательство корректности, …
+		li.fragment Рекурсия
+		li.fragment Эффективность
+		// При умелом программировании не ведет к падению эффективности (компилятор сводит к итерации)
+		li.fragment Отсутствует оператор присваивания
+		// Определения функций, (=) имеет другую семантику – связывание имен
+		// Будучи один раз связанным, имя не может менять свое значение (в рамках области видимости)
+		// Следствие: нет побочных эффектов
+
+section
+	h4 Простые функции
+	pre
+		code.haskell.
+			succ' n = n + 1
+
+			> succ' 9
+			10
+
+			square x = x * x
+
+			> square 4
+			16
+
+			squareIfLess5 = if x < 5 then square x else x
+
+			> squareIfLess5 3
+			9
+			> squareIfLess5 7
+			7
+
+section
+	h4 Строки
+	p Строка – это список символов
+	pre
+		code.hs.
+			> "Марьванна"
+			"Марьванна"
+			it :: [Char]
+		code.hs.fragment.
+			> 'М':"арьванна"
+			> ['М','а','р','ь','в','а','н','н','а']
+			-- про списки ниже!
+		code.hs.fragment.
+			hello s = "Hello, " ++ s ++ "!"
+			> hello "Марьванна"
+			"Hello, \1052\1072\1088\1100\1074\1072\1085\1085\1072!"
+
+section
+	h4 Типы функций
+	pre
+		code.hs.
+			> :t hello
+			hello :: [Char] -> [Char]
+		code.hs.fragment.
+			> :t fac
+			fac :: (Eq a, Num a) => a -> a
+			-- ограничение - контекст (классы типов)
+		code.hs.fragment.
+			> :t max
+			max :: Ord a => a -> a -> a
+		code.hs.fragment.
+			> :t squareIfLess5
+			squareIfLess5 :: (Num a, Ord a) => a -> a
