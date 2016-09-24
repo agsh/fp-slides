@@ -196,3 +196,298 @@ section
 		code.hs.fragment.
 			> :t squareIfLess5
 			squareIfLess5 :: (Num a, Ord a) => a -> a
+
+section
+	h4 Префикс, суффикс, инфикс
+	pre
+		code.hs.
+			(sumWithSquareOf) x y = x + square y
+
+			> 3 `sumWithSquareOf` 5
+			28
+			> (sumWithSquareOf) 3 5
+			28
+		code.hs.fragment.
+			import Prelude hiding ((+))
+			x + y = x – y
+			> 8 + 3
+			5
+		code.hs.fragment.
+			> (-) 23 13
+			10
+			> :t (-)
+			(-) :: Num a => a -> a -> a
+
+	p.fragment Пригодится для ФВП
+
+section
+	h4 Списки
+	pre
+		code.hs.
+			> let lostNumbers = [4,8,15,16,23,42]
+
+			> let cards = [3,7,12]
+
+			> let mix = lostNumbers ++ cards
+
+			> mix
+			[4,8,15,16,23,42,3,7,12]
+
+			> let lostNumbers = [13,666,1488]
+		code.hs.fragment.
+			> mix ?
+		code.hs.fragment.
+			[4,8,15,16,23,42,3,7,12]
+		code.hs.fragment.
+			> [1, "Гарри Поттер", 16.5] ?
+
+section
+	h4 Списки
+	pre
+		code.hs.
+			> []
+			it :: [a]
+
+			> [1, 13, 666]
+			it :: [Integer]
+
+			> [[1, 2], [3, 4]]
+			it :: [[Integer]]
+
+			> [[1, 2], [3, 4]] ++ [[5, 6]]
+			it :: [[Integer]]
+
+			> [[], []]
+			it :: [[a]]
+		code.hs.fragment.
+			> [1, [2,3,4]] ?
+		code.hs.fragment.
+			-- ничего дельного
+
+section
+	h4 Оператор пары
+	pre
+		code.hs.
+			> 3 : mix
+			[3,4,8,15,16,23,42,3,7,12]
+		code.hs.fragment.
+			> [3] : [1, 3, 4]
+		code.hs.fragment.
+			--фигвам
+		code.hs.fragment.
+			> [3] : [[5, 6]]
+			it :: [[Integer]]
+
+			> mix!!5 –- получение элемента
+			42
+		code.hs.fragment.
+			> 13 : [] ?
+
+section
+	h4 Списки
+	p Список – это
+	ul
+		li Конструктор списка (пустой список): []
+		li Набор элементов одного типа
+		li Оператор пары
+	pre
+		code.hs 1 : 2 : 3 : 4 : 5 : []
+	p Всё остальное – синтаксический сахар
+
+section
+	h4 Работа со списками
+	pre
+		code.hs.
+			> head [1..5] -– [1, 2, 3, 4, 5]
+			1
+			> head []
+		code.hs.fragment.
+			*** Exception: Prelude.head: empty list
+			> head [13] ?
+		code.hs.fragment.
+			> tail [1..5]
+			[2, 3, 4, 5]
+			> last [1..5]
+			5
+			> init [1..5]
+			[1, 2, 3, 4]
+			> length [2..6]
+			5
+			> null [1..5]
+			False
+			> null []
+			True
+
+section
+	h4 Работа со списками
+	pre
+		code.hs.
+			null' x = if (x=[]) then True else False
+			или
+			null' [] = True
+			null' _ = False
+
+			>:t null'
+			null :: [a] -> Bool
+
+			> take 4 [1..10]
+			[1, 2, 3, 4]
+			> take 4 [1..]
+			[1, 2, 3, 4]
+			> [1..] ?
+
+section
+	h4 Работа со списками
+	pre
+		code.hs.
+			> drop 4 [1..10]
+			[5, 6, 7, 8, 9, 10]
+			> take 4 (drop 7 "Hello, dude!")
+			"dude"
+			> drop 666 [1..10]
+			[]
+			> drop 4 [1..] ?
+
+			> minimum [10, 2, 5, -1, 99]
+			-1
+			> sum [1..10]
+			55
+			> product [1..10]
+			3628800
+			-- hmmm
+
+section
+	h4 Работа со списками
+	pre
+		code.hs.
+			fac n = product [1..n]
+			> fac 6
+			720
+
+			> elem 4 [1..10]
+			True
+			> elem 666 [1..10]
+			False
+			> 'o' `elem` "balloooon"
+			True
+
+section
+	h4 Генерация списков
+	pre
+		code.hs.
+			> [1,3..20]
+			[1,3,5,7,9,11,13,15,17,19]
+			> ['a'..'z']
+			"abcdefghijklmnopqrstuvwxyz"
+
+			> ['a'..] ?
+			> [0.1, 0.3 .. 1]
+			[0.1,0.3,0.5,0.7,0.8999999999999999,1.0999999999999999]
+
+			> take 11 (cycle "LOL ")
+			"LOL LOL LOL"
+
+			> take 10 (repeat 5)
+			[5,5,5,5,5,5,5,5,5,5]
+			> take 10 [5,5..]
+			[5,5,5,5,5,5,5,5,5,5]
+
+section
+	h4 Генерация списков
+	pre
+		code.hs.
+			> replicate 10 5
+			[5,5,5,5,5,5,5,5,5,5]
+			> let replicate' how what = take how (repeat what)
+		p let smth = ...
+
+section
+	h4 Генерация списков
+	pre
+		code.hs.
+			> [ a*a | a <- [1..10] ]
+			[1,4,9,16,25,36,49,64,81,100]
+
+			> [ [a,b] | a <- [1..3], b <- [3..7] ]
+			[[1,3],[1,4],[1,5],[1,6],[1,7],
+				[2,3],[2,4],[2,5],[2,6],[2,7],
+					[3,3],[3,4],[3,5],[3,6],[3,7]]
+
+			> [ [a,b] | a <- [1..3], b <- [3..7], 5 == a + b ]
+			[[1,4],[2,3]]
+			boomBangs xs =
+				[ if x < 10 then "BOOM!" else "BANG!" | x <- xs, odd x]
+			> boomBangs [7..13]
+			["BOOM!","BOOM!","BANG!","BANG!"]
+
+section
+	h4 Списки. Лень
+	pre
+		code.js.
+			for (let a = [], i = 0; i < 100000000000; i++) {
+				a.push(i);
+			}
+	pre
+		code.hs.fragment.
+			> let a = [1..100000000000]
+			-- и.. ничего
+		code.hs.fragment.
+			> let b = [ div 10 x | x <- [5,4..0] ]
+			> take 5 b ?
+			> take 6 b ?
+
+section
+	h4 Генерация списков
+	p Теорема ферма
+	pre
+		code.hs.
+			-- списки
+			let rightTriangles = [[a,b,c] |
+				c <- [1..9], b <- [1..c], a <- [1..b], a^2 + b^2 == c^2]
+
+			-- кортежи
+			let rightTriangles = [(a,b,c) |
+				c <- [1..9], b <- [1..c], a <- [1..b], a^2 + b^2 == c^2]
+
+section
+	h4 Кортежи
+	pre
+		code.hs.
+			> (1,2)
+			(1,2)
+			> ("Гарри Поттер", 13, 2.5)
+			("Гарри Поттер", 13, 2.5)
+			> fst (1,2)
+			1
+			> snd (1,2)
+			2
+			> fst (1,2,3) ?
+			> let (a,b,c) = (1,2,3)
+				-- (сопоставление с образцом, 3с. ниже)
+			> b
+			2
+			> [("Гарри Поттер", 13, 2.5),("Колобок", 1, 55.5)]
+
+section
+	h4 Синонимы типов
+	pre
+		code.hs.
+			> type String = [Char]
+
+			> type Name = String
+			> type Person = (Name, Integer, Float)
+			> let a = ("ГП", 12, 3.4)::Person
+			> :t a
+			a :: Person
+			> :t [a, ("ГГ", 19, 0.2)]
+			[a,("ГГ", 19, 0.2)] :: [Person]
+
+		p Больше – создание новых типов
+
+section
+	h4 Задание
+	p.
+		Опишите функцию, которая для данного числа n создает список
+		из всех попарных сумм чисел от 1 до n.
+		( Т.е. [1+1, 1+2, 1+3, ..., 1+n, 2+1, 2+2, ..., n+n]
+			- всего n*n элементов)
