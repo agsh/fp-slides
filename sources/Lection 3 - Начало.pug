@@ -491,3 +491,98 @@ section
 		из всех попарных сумм чисел от 1 до n.
 		( Т.е. [1+1, 1+2, 1+3, ..., 1+n, 2+1, 2+2, ..., n+n]
 			- всего n*n элементов)
+
+section
+	h4 Сопоставление с образцом
+	pre
+		code.hs.
+			sayWhat :: Int -> String
+			sayWhat 1 = "место встречи изменить нельзя"
+			sayWhat 2 = "как обычно"
+			sayWhat 3 = "суббота"
+			sayWhat 4 = "я ничего не знаю"
+			sayWhat 5 = "ненавижу хаскель, заберите меня отсюда"
+
+			> sayWhat 3
+		code.hs.fragment.
+			Чего не хватает?
+		code.hs.fragment.
+			Non-exhaustive patterns in function sayWhat
+
+section
+	h4 Сопоставление с образцом
+	pre
+		code.hs.
+			sayWhat :: Int -> String  -- кстати, тип можно не писать!
+			sayWhat 1 = "место встречи изменить нельзя"
+			sayWhat 2 = "вторник четвёртая пара"
+			sayWhat 3 = "вторник пятая пара"
+			sayWhat 4 = "я ничего не знаю"
+			sayWhat 5 = "ненавижу хаскель, заберите меня отсюда"
+			sayWhat _ = "кто здесь?"
+
+			> sayWhat 3
+
+section
+	h4 Сопоставление с образцом
+	pre
+		code.hs.
+			sayWhat :: Int -> String
+			sayWhat 1 = "место встречи изменить нельзя"
+			sayWhat 2 = "вторник четвёртая пара"
+			sayWhat _ = "кто здесь?"
+			sayWhat 3 = "вторник пятая пара"
+			sayWhat 4 = "я ничего не знаю"
+			sayWhat 5 = "ненавижу хаскель, заберите меня отсюда"
+		code.hs.fragment.
+			> sayWhat 3
+			> sayWhat 1
+		code.hs.fragment.
+			Pattern match(es) are overlapped
+
+section
+	h4 Сопоставление кортежей
+	pre
+		code.hs.
+			opinion :: (Int, String) -> String
+			opinion man =
+				"Я, " ++ snd man ++ " считаю \"" ++
+				sayWhat (fst man) ++ "\""
+			-- обратите внимание на скобки
+
+			> opinion (5, "Пупкин Васёк")
+
+			opinion :: (Int, String) -> String
+			opinion (num, name) =
+				"Я, " ++ name ++ " считаю \"" ++ sayWhat num ++ "\""
+
+section
+	h4 read-show
+	pre
+		code.hs.
+			> show 1
+			"1"
+			> show (2, "Пупкин Васёк")
+			"(2, \"Пупкин Васёк\")"
+
+			> read "True" || False
+			True
+
+section
+	h4 Охранные выражения
+	ul
+		li похожи на switch/case
+		li слоник
+	pre
+		code.hs.
+			bmiTell :: (RealFloat a) => a -> a -> String
+			bmiTell weight height
+				| weight / height ^ 2 <= 18.5 =
+					"You're underweight, you emo, you!"
+				| weight / height ^ 2 <= 25.0 =
+					"You're normal. Pffft, I bet you're ugly!"
+				| weight / height ^ 2 <= 30.0 =
+					"You're fat! Lose some weight, fatty!"
+				| otherwise =
+					"You're a whale, congratulations!"
+
