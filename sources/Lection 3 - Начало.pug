@@ -515,8 +515,8 @@ section
 		code.hs.
 			sayWhat :: Int -> String  -- кстати, тип можно не писать!
 			sayWhat 1 = "место встречи изменить нельзя"
-			sayWhat 2 = "вторник четвёртая пара"
-			sayWhat 3 = "вторник пятая пара"
+			sayWhat 2 = "как обычно"
+			sayWhat 3 = "суббота"
 			sayWhat 4 = "я ничего не знаю"
 			sayWhat 5 = "ненавижу хаскель, заберите меня отсюда"
 			sayWhat _ = "кто здесь?"
@@ -529,9 +529,9 @@ section
 		code.hs.
 			sayWhat :: Int -> String
 			sayWhat 1 = "место встречи изменить нельзя"
-			sayWhat 2 = "вторник четвёртая пара"
+			sayWhat 2 = "как обычно"
 			sayWhat _ = "кто здесь?"
-			sayWhat 3 = "вторник пятая пара"
+			sayWhat 3 = "суббота"
 			sayWhat 4 = "я ничего не знаю"
 			sayWhat 5 = "ненавижу хаскель, заберите меня отсюда"
 		code.hs.fragment.
@@ -586,3 +586,82 @@ section
 				| otherwise =
 					"You're a whale, congratulations!"
 
+section
+	h4 Охранные выражения
+	pre
+		code.hs.
+			bmiTell :: (RealFloat a) => a -> a -> String
+			bmiTell weight height
+				| bmi <= 18.5 =
+					"You're underweight, you emo, you!"
+				| bmi <= 25.0 =
+					"You're normal. Pffft, I bet you're ugly!"
+				| bmi <= 30.0 =
+					"You're fat! Lose some weight, fatty!"
+				| otherwise =
+					"You're a whale, congratulations!"
+				where bmi = weight / height ^ 2
+
+section
+	h4 Охранные выражения
+	pre
+		code.hs.
+			bmiTell :: (RealFloat a) => a -> a -> String
+			bmiTell weight height
+				| bmi <= skinny =
+					"You're underweight, you emo, you!"
+				| bmi <= normal =
+					"You're normal.Pffft, I bet you're ugly!"
+				| bmi <= fat =
+					"You're fat! Lose some weight, fatty!"
+				| otherwise =
+					"You're a whale, congratulations!"
+				where
+					bmi = weight / height ^ 2
+					skinny = 18.5
+					normal = 25.0
+					fat = 30.0
+
+section
+	h4 Охранные выражения
+	pre
+		code.hs.
+			bmiTell :: (RealFloat a) => a -> a -> String
+			bmiTell weight height
+				| bmi <= skinny =
+			"You're underweight, you emo, you!"
+				| bmi <= normal =
+			"You're normal.Pffft, I bet you're ugly!"
+				| bmi <= fat =
+			"You're fat! Lose some weight, fatty!"
+				| otherwise =
+			"You're a whale, congratulations!"
+				where (skinny, normal, fat) = (18.5, 25.0, 30.0)
+
+section
+	h4 Композиционный стиль
+	pre
+		code.hs.
+			> [let square x = x * x in (square 5, square 3, square 2)]
+
+			> let square x = x * x in map square [5,3,2]
+
+			> (let a = 100; b = 200; c = 300 in a*b*c, let foo="Hey "; bar = "there!" in foo ++ bar)
+
+			some =
+				let opinion man = "Я, " ++ snd man ++ " считаю \"" ++ sayWhat (fst man) ++ "\""
+						dude = (5, "Пупкин Васёк")
+				in opinion dude
+
+section
+	h4 case
+	pre
+		code.hs.
+			sayWhat :: Int -> String
+			sayWhat pos = "Моё мнение – " ++
+				сase pos of 1 -> "оставить как есть"
+										2 -> "как обычно"
+										3 -> "суббота"
+										4 -> "я ничего не знаю"
+										5 -> "ненавижу хаскель, заберите меня отсюда"
+										_ -> "кто здесь?"
