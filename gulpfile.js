@@ -1,6 +1,6 @@
 var gulp = require('gulp')
 	, pug = require('gulp-pug')
-	, reveal = require('../gulp-revealjs')
+	, reveal = require('gulp-revealjs')
 	;
 
 gulp.task('default', function() {
