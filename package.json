@@ -12,6 +12,6 @@
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-pug": "^3.0.4",
-    "gulp-revealjs": "0.0.1"
+    "gulp-revealjs": ">=0.0.2"
   }
 }

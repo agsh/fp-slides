@@ -13,6 +13,6 @@ gulp.task('images', () => gulp.src('sources/img/**')
 
 gulp.task('compile', () => gulp.src('sources/*.pug')
 	.pipe(pug({}))
-	.pipe(reveal())
+	.pipe(reveal({revealOptions: {mouseWheel: true}}))
 	.pipe(gulp.dest('lections/'))
 );
