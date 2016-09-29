@@ -71,3 +71,96 @@ section
       fac(N, M):-  sub(N, 1, N1), fac(N1,M1), mul(N, M1, M).
   p 1976 Девид Уоррен - Edinburgh Prolog, WAM
 
+section
+  h4 1976
+  p Петер Хендерсон и Джеймс Моррис LispKit, лень
+  pre
+    code.lisp.
+      facs = scanl (*) 1 [1..]
+      fac n = facs !! n
+
+section
+  h4 1977
+  img(src="./img/1-9.jpg" alt="Джон Бекус")
+  p Джон Бекус, премия Тьюринга за участие в создании Алгола и Фортрана, но! ФВП
+  pre
+    code def fac = eq o [id , 0] -> 1 ; x o [id , fac o - o [id , 1]]
+
+section
+  h4 ML
+  img(src="./img/1-10.jpg" alt="Робин Милнер")
+  p 1973, Эдинбург, университет
+  p ML, metalanguage – полиморфная система типов
+  p Робин Милнер
+
+section
+  h4 ML
+  p Типизация - ?
+  p Полиморфизм - ?
+  p.fragment.
+    Ad hoc полиморфизм, Параметрический полиморфизм
+
+section
+  h4 ML
+  p Вывод типов (Роджер Хиндли, 69)
+  p Ещё и императивный!
+  p Standard ML, CAML и чисто функциональный Lazy ML
+  pre
+    code.ML.
+      fun fac(n) = if n = 0 then 1 else n * fac(n-1);
+
+section
+  h4 1977, там же, Эдинбург, университет
+  p Hope, алгебраические типы данных, сопоставление с образцом
+  pre
+    code.
+      data Bool = False | True
+      data List a = Nil
+             | Cons a (List a)
+  pre
+    code.
+      dec fact : num -> num;
+      --- fact 0 <= 1;
+      --- fact n <= n*fact(n-1);
+
+section
+  h4 1985
+  img(src="./img/1-11.jpg" alt="Дэвид Тёрнер")
+  p Дэвид Тёрнер – Miranda, всё вместе!
+  ul
+    li функции высшего порядка,
+    li ленивые вычисления,
+    li алгебраические типы данных,
+    li параметрический полиморфизм,
+    li сопоставление с образцом
+
+section
+  h4 Miranda(TM)
+  pre
+    code.
+      fac n = 1, if n = 0
+        = n * fac (n - 1), otherwise
+  pre
+    code.
+      сопоставления
+      fac 0 = 1
+      fac n = n * fac (n-1)
+  pre
+    code.
+      ZF
+      fac n  = product [1..n]
+
+section
+  h4 Haskell
+  ul
+    li 1987г. FPCA ‘87 (Functional Programming Languages and Computer Architecture), Орегон
+    li 1991г. Haskell 1.0
+    li 1999г. The Haskell 98 Report
+    li 2010г. Haskell 2010
+
+section
+  h4 Орегон '87
+  img(src="./img/1-12.jpg")
+
+section
+  img(src="./img/1-12.png")
