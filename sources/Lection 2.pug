@@ -28,6 +28,46 @@ section
   p Хаскелл Брукс Карри
 section
   h4 λ-исчисление 1936
-  img(src="./img/1-2.jpg" alt="Алонзо Чёрч")
+  img(src="./img/1-4.jpg" alt="Алонзо Чёрч")
   p Алонзо Чёрч
-  p Теоре́ма Чёрча — Тью́ринга — утверждение об отсутствии алгоритма, решающего проблему разрешения.
+  p ТЧТ — утверждение об отсутствии алгоритма, решающего проблему разрешения.
+section
+  img(src="./img/1-5.gif" alt="Haskell")
+section
+  h4 1958
+  img(src="./img/1-5.jpg" alt="Джон Маккарти")
+  p Джон Маккарти
+  pre
+    code.lisp.
+      (define fac (n)
+           (if (eq n (quote 0))
+               (quote 1)
+               (mul n (fac (sub n (quote 1))))))
+  p Lots of Infuriating, Stupid Parenthesis
+section
+  h4 Питер Ландин
+  img(src="./img/1-6.jpg" alt="Питер Ландин")
+  ul
+    li 1964 – SECD
+    li 1966 – ISWIM (if you see what I mean)
+  pre
+    code rec fac(n) = (n = 0) -> 1 ; n fac(n-1)
+
+section
+  h4 1963
+  img(src="./img/1-7.jpg" alt="Джон Алан Робинсон")
+  p.
+    Джон Алан Робинсон, принцип резолюции
+    → автоматическое доказание теорем
+
+section
+  h4 1971
+  img(src="./img/1-8.jpg" alt="Алан Колмероэ")
+  p Алан Колмероэ – пролог
+  p PROgrammation en LOGique
+  pre
+    code.prolog.
+      fac(0, 1).
+      fac(N, M):-  sub(N, 1, N1), fac(N1,M1), mul(N, M1, M).
+  p 1976 Девид Уоррен - Edinburgh Prolog, WAM
+
