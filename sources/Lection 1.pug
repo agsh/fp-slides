@@ -1,12 +1,15 @@
 section(data-state="front")
   h2#title-of-talk Функциональное программирование
+
 section
   h3 Вопросы?
   img(src="./img/0-1.png" alt="Вопросы")
   p.fragment 4 ответа
+
 section
   h3 Who?
   img(src="./img/0-2.jpg" alt="Гора")
+
 section
   h3 WTF?
   table
@@ -14,6 +17,7 @@ section
       td(style="text-align: right;") Императивное программирование
       td Декларативное программирование
   img(src="./img/0-3.jpg" alt="Вопросы")
+
 section
   p Синтетический пример
   table
@@ -110,3 +114,142 @@ section
     li ФВП
     li Рекурсия
 
+section
+  h4 quicksort C++
+  pre(style="font-size: 0.4em; width: 100%")
+    code.
+      public static void qs(int[] A, int low, int high) {
+        int i = low;
+        int j = high;
+        int x = A[(low+high)/2];
+        do {
+            while(A[i] < x) ++i;
+            while(A[j] > x) --j;
+            if(i <= j){
+                int temp = A[i];
+                A[i] = A[j];
+                A[j] = temp;
+                i++; j--;
+            }
+        } while(i <= j);
+
+        if(low < j) qs(A, low, j);
+        if(i < high) qs(A, i, high);
+      }
+
+section
+  h4 quicksort haskell
+  pre
+    code.
+    | qs [] = []
+    | qs (x:xs) = (qs l) ++ [x] ++ (qs r)
+    |   where (l,r) = partition (<x) xs
+
+section
+  h4 Нитшяки
+  ul
+    li Безопасность
+    li Эффективность
+    li Управляемость
+
+section
+  h4 Сборщик мусора
+  img(src="./img/0-4.jpg" alt="Garbage collector")
+
+section
+  h4 Неизменяемость (immutability)
+  p i = i + 1
+  p i = ?
+  img(src="./img/0-5.jpg" alt="Bang!")
+
+section
+  img(src="./img/0-2.png" alt="Parallel")
+
+section
+  h4 Отсутствие побочных эффектов (side-effects)
+  img(src="./img/0-6.jpg" alt="Calmness")
+  p.
+    Если получилось скомпилировать программу,
+    то с большой вероятностью она работает правильно
+
+section
+  h4 Что мы будем делать?
+  img(src="./img/0-7.jpg" alt="Work")
+
+section
+  h4 Конкретика
+  ul
+    li 12 - 15 занятий
+    li 3 - 4 лабы
+    li полусеместровый контроль
+    li Зачёт
+    li Haskell
+    li посещания, отмечания
+    li контрольные (paper)
+
+section
+  h4 Что не будем делать
+  ul
+    li Рассмотривать процесс проектирования программ на хаскеле (но cabal!)
+    li Заниматься реактивным программированием
+    li Рассматривать процесс компиляции
+
+section
+  h4 Есть ли альтернатива?
+  img(src="./img/0-8.jpg" alt="Alt")
+
+section
+  img(src="./img/0-9.jpg" alt="Martin Odersky")
+  div Martin Odersky. Scala.
+  div (7 weeks long)
+  div Workload: 5-7 hours/week
+  div https://www.coursera.org/course/progfun
+
+section
+  img(src="./img/0-10.jpg" alt="O'Caml")
+  div Introduction to Functional Programming in OCaml
+  div (6 weeks long)
+  div Workload: 2-6 hours/week
+  div https://www.fun-mooc.fr/courses/parisdiderot/56002S02/session02/about
+
+section
+  table
+    tr
+      td
+        img(src="./img/0-11-0.jpg" alt="Book")
+      td
+        img(src="./img/0-11-1.jpg" alt="Book")
+    tr
+      td
+        img(src="./img/0-11-2.jpg" alt="Book")
+      td
+        img(src="./img/0-11-3.jpg" alt="Book")
+
+section
+  ul
+    li
+      a tryhaskell.org
+    li
+      a http://learnyouahaskell.com/
+    li
+      a http://en.wikibooks.org/wiki/Haskell/YAHT
+    li
+      a http://acm.wustl.edu/functional/haskell.php
+    li
+      a http://www.haskell.org/haskellwiki/Tutorial
+    li
+      a http://www.haskell.org/haskellwiki/Hitchhikers_guide_to_Haskell
+    li
+      a http://www.willamette.edu/~fruehr/haskell/evolution.html
+
+section
+  h4 Installation
+  ul
+    li sudo apt-get install haskell-platform
+    li yum install haskell-platform
+    li haskell.org/platform
+    li
+      strike hugs, winhugs
+
+section
+  a https://github.com/agsh/fp-slides
