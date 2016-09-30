@@ -4,3 +4,109 @@ section
   h3 Вопросы?
   img(src="./img/0-1.png" alt="Вопросы")
   p.fragment 4 ответа
+section
+  h3 Who?
+  img(src="./img/0-2.jpg" alt="Гора")
+section
+  h3 WTF?
+  table
+    tr
+      td(style="text-align: right;") Императивное программирование
+      td Декларативное программирование
+  img(src="./img/0-3.jpg" alt="Вопросы")
+section
+  p Синтетический пример
+  table
+    tr
+      td
+        pre(style="font-size: 0.4em; width: 100%")
+          code.js.
+            var m = [1,2,10,3], n = [];
+            for (var i = 0; i < m.length; i++) {
+              if (m[i] % 2 !== 0) {
+                n.push(m[i] * 2);
+              }
+            }
+            var a;
+            if (m.length > 1) {
+              a = n[0];
+              for (i = 1; i < n.length; i++) {
+                if (n[i] > a) {
+                  a = n[i];
+                }
+              }
+            } else {
+              a = n[0] || -Infinity;
+            }
+            a;
+      td
+        pre(style="font-size: 0.4em; width: 100%")
+          code.js.
+            Math.max(
+              ...[1,2,10,3]
+                .filter(a => a % 2)
+                .map(a => a * 2)
+            )
+
+section
+  h4 Функциональные языки
+  ul
+    li LISP (Common LISP, Scheme)
+    li Haskell, Elm
+    li ML, Caml, O'Caml, F#
+    li Scala
+    li Erlang
+
+section
+  h4 Функциональные языки
+  ul
+    li C#
+      br
+      small (Paradigm(s) multi-paradigm: structured, imperative, object-oriented, event-driven,
+        b  functional
+        | , generic, reflective)
+    li Javascript
+      br
+      small (Multi-paradigm: scripting, object-oriented (prototype-based), imperative,
+        b  functional
+        | )
+    li Python
+      br
+      small (multi-paradigm: object-oriented, imperative,
+        b  functional
+        | , procedural, reflective)
+    li Ruby
+      br
+      small (multi-paradigm: object-oriented, imperative, reflective,
+        b  functional
+        | )
+    li Swift
+      br
+      small (multi-paradigm: protocol-oriented, object-oriented,
+        b  functional
+        | , imperative, block structured)
+    li C++
+      br
+      small (Multi-paradigm:[1] procedural,
+        b  functional
+        | , object-oriented, generic) (C++11)
+
+section
+  h4 Зачем?
+  img(src="./img/0-4.gif" alt="Зачем?" style="float: left")
+  p
+    p Java
+    p 1C
+    p C#
+
+section
+  h4 Ништяки
+  ul
+    li Вывод типов, привет var!
+    li λ-выражения (анонимные функции)
+    li Сопоставление с образцом
+    li Деструктивное присваивание ([a,b] = [b,a])
+    li Свёртки: Map / Reduce / ... , даже LINQ
+    li ФВП
+    li Рекурсия
+
