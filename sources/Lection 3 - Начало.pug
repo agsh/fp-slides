@@ -1,667 +1,669 @@
 section
-	h4 Haskell
-	ul
-		li Лаконичность
-		li Строгая типизация
-		li Модульность
-		li Функции — объекты первого порядка
-		li Отсутствие побочных эффектов
-		li Ленивые вычисления
+  h4 Haskell
+  ul
+    li Лаконичность
+    li Строгая типизация
+    li Модульность
+    li Функции — объекты первого порядка
+    li Отсутствие побочных эффектов
+    li Ленивые вычисления
 
 section
-	h4 Синтаксис. Числа.
-	pre
-		code.haskell.
-			> 2 + 2
-			4
+  h4 Синтаксис. Числа.
+  pre
+    code.haskell.
+      > 2 + 2
+      4
 
-			> 6 / 5
-			1.2
+      > 6 / 5
+      1.2
 
-			> 6 / -5
-			Precedence parsing error
-				cannot mix `/' [infixl 7] and prefix `-' [infixl 6]
-				in the same infix expression
-			> 6 / (-5)
-			-1.2
-
-section
-	h4 Синтаксис. Булеан.
-	pre
-		code.haskell.
-			> True || False
-			True
-
-			> True && False
-			False
-
-			> not False
-			True
-
-			> 2 * 2 == 4
-			True
-
-			> 2 * 2 /= 5
-			True
-		code.haskell.fragment.
-			> 2 == "два"	?
+      > 6 / -5
+      Precedence parsing error
+        cannot mix `/' [infixl 7] and prefix `-' [infixl 6]
+        in the same infix expression
+      > 6 / (-5)
+      -1.2
 
 section
-	h4 Это вам не js и не c
-	pre
-		code.
-			<interactive>:56:1:
-			No instance for (Num [Char])
-				arising from the literal `2'
-			Possible fix: add an instance declaration for (Num [Char])
-			In the first argument of `(==)', namely `2'
-			In the expression: 2 == "sad"
-			In an equation for `it': it = 2 == "sad"
+  h4 Синтаксис. Булеан.
+  pre
+    code.haskell.
+      > True || False
+      True
+
+      > True && False
+      False
+
+      > not False
+      True
+
+      > 2 * 2 == 4
+      True
+
+      > 2 * 2 /= 5
+      True
+    code.haskell.fragment.
+      > 2 == "два"	?
 
 section
-	h4 Типы (:set +t)
-	p Всегда с большой буквы
-	ul
-		li Integer, Int
-		li Float, Double
-		li Bool (True, False) (алгебраический тип)
-		li Char
+  h4 Это вам не js и не c
+  pre
+    code.
+      <interactive>:56:1:
+      No instance for (Num [Char])
+        arising from the literal `2'
+      Possible fix: add an instance declaration for (Num [Char])
+      In the first argument of `(==)', namely `2'
+      In the expression: 2 == "sad"
+      In an equation for `it': it = 2 == "sad"
 
 section
-	h4 Типы (:set +t)
-	pre
-		code.haskell.
-			> :set +t
-			> 42
-			42 it :: Integer
-
-			> 3.1415
-			> True
-
-			> :t 42
-			42 :: Num a => a
-				(параметрический, специальный (ad hoc) полиморфизм)
-
-			42 + 1.2
-			it :: Double
-
-			> :t 42 + 8.2
-			42 + 8.2 :: Fractional a => a
+  h4 Типы (:set +t)
+  p Всегда с большой буквы
+  ul
+    li Integer, Int
+    li Float, Double
+    li Bool (True, False) (алгебраический тип)
+    li Char
 
 section
-	h4 Функции
-	pre
-		code.haskell.
-			> succ 9
-			10
-			> max 2.5 5.6
-			5.6
-			> 2 + max 2.5 5.6 + min 3.4 (succ 4)
-			11.0
-			> 2 + (max 2.5 5.6) + (min 3.4 (succ 4))
+  h4 Типы (:set +t)
+  pre
+    code.haskell.
+      > :set +t
+      > 42
+      42 it :: Integer
 
-			Ассоциативность слева, справа
+      > 3.1415
+      > True
 
-			2 ** 2 ** 3 / (2 ** 2) ** 3/  2 ** (2 ** 3)
-			2 - 2 – 2  ?
+      > :t 42
+      42 :: Num a => a
+        (параметрический, специальный (ad hoc) полиморфизм)
 
-section
-	h4 Функции
-	p Напишите выражение, высчитывающее минимальное число среди 10, 2, 5, -1, 99
+      42 + 1.2
+      it :: Double
 
-section
-	h4 Опять факториал
-	p lab1.hs
-	pre
-		code.haskell.
-			fac 0 = 1
-			fac n = n * fac (n-1)
-	p console
-	pre
-		code.haskell.
-			> ghci
-			> :load ~lab1.hs
-			> fac 6
-			720
-			> let a = 20
-			> fac a
-			2432902008176640000
+      > :t 42 + 8.2
+      42 + 8.2 :: Fractional a => a
 
 section
-	h4 Что происходит
-	ul
-		li Математика
-		// Определение функции похоже на математическое определение факториала
-		li.fragment Рассуждение
-		// Рассуждение о программах: доказательство корректности, …
-		li.fragment Рекурсия
-		li.fragment Эффективность
-		// При умелом программировании не ведет к падению эффективности (компилятор сводит к итерации)
-		li.fragment Отсутствует оператор присваивания
-		// Определения функций, (=) имеет другую семантику – связывание имен
-		// Будучи один раз связанным, имя не может менять свое значение (в рамках области видимости)
-		// Следствие: нет побочных эффектов
+  h4 Функции
+  pre
+    code.haskell.
+      > succ 9
+      10
+      > max 2.5 5.6
+      5.6
+      > 2 + max 2.5 5.6 + min 3.4 (succ 4)
+      11.0
+      > 2 + (max 2.5 5.6) + (min 3.4 (succ 4))
+
+      Ассоциативность слева, справа
+
+      2 ** 2 ** 3 / (2 ** 2) ** 3/  2 ** (2 ** 3)
+      2 - 2 – 2  ?
 
 section
-	h4 Простые функции
-	pre
-		code.haskell.
-			succ' n = n + 1
-
-			> succ' 9
-			10
-
-			square x = x * x
-
-			> square 4
-			16
-
-			squareIfLess5 = if x < 5 then square x else x
-
-			> squareIfLess5 3
-			9
-			> squareIfLess5 7
-			7
+  h4 Функции
+  p Напишите выражение, высчитывающее минимальное число среди 10, 2, 5, -1, 99
 
 section
-	h4 Строки
-	p Строка – это список символов
-	pre
-		code.hs.
-			> "Марьванна"
-			"Марьванна"
-			it :: [Char]
-		code.hs.fragment.
-			> 'М':"арьванна"
-			> ['М','а','р','ь','в','а','н','н','а']
-			-- про списки ниже!
-		code.hs.fragment.
-			hello s = "Hello, " ++ s ++ "!"
-			> hello "Марьванна"
-			"Hello, \1052\1072\1088\1100\1074\1072\1085\1085\1072!"
+  h4 Опять факториал
+  p lab1.hs
+  pre
+    code.haskell.
+      fac 0 = 1
+      fac n = n * fac (n-1)
+  p console
+  pre
+    code.haskell.
+      > ghci
+      > :load ~lab1.hs
+      > fac 6
+      720
+      > let a = 20
+      > fac a
+      2432902008176640000
 
 section
-	h4 Типы функций
-	pre
-		code.hs.
-			> :t hello
-			hello :: [Char] -> [Char]
-		code.hs.fragment.
-			> :t fac
-			fac :: (Eq a, Num a) => a -> a
-			-- ограничение - контекст (классы типов)
-		code.hs.fragment.
-			> :t max
-			max :: Ord a => a -> a -> a
-		code.hs.fragment.
-			> :t squareIfLess5
-			squareIfLess5 :: (Num a, Ord a) => a -> a
+  h4 Что происходит
+  ul
+    li Математика
+    // Определение функции похоже на математическое определение факториала
+    li.fragment Рассуждение
+    // Рассуждение о программах: доказательство корректности, …
+    li.fragment Рекурсия
+    li.fragment Эффективность
+    // При умелом программировании не ведет к падению эффективности (компилятор сводит к итерации)
+    li.fragment Отсутствует оператор присваивания
+    // Определения функций, (=) имеет другую семантику – связывание имен
+    // Будучи один раз связанным, имя не может менять свое значение (в рамках области видимости)
+    // Следствие: нет побочных эффектов
 
 section
-	h4 Префикс, суффикс, инфикс
-	pre
-		code.hs.
-			(sumWithSquareOf) x y = x + square y
+  h4 Простые функции
+  pre
+    code.haskell.
+      succ' n = n + 1
 
-			> 3 `sumWithSquareOf` 5
-			28
-			> (sumWithSquareOf) 3 5
-			28
-		code.hs.fragment.
-			import Prelude hiding ((+))
-			x + y = x – y
-			> 8 + 3
-			5
-		code.hs.fragment.
-			> (-) 23 13
-			10
-			> :t (-)
-			(-) :: Num a => a -> a -> a
+      > succ' 9
+      10
 
-	p.fragment Пригодится для ФВП
+      square x = x * x
+
+      > square 4
+      16
+
+      squareIfLess5 = if x < 5 then square x else x
+
+      > squareIfLess5 3
+      9
+      > squareIfLess5 7
+      7
 
 section
-	h4 Списки
-	pre
-		code.hs.
-			> let lostNumbers = [4,8,15,16,23,42]
-
-			> let cards = [3,7,12]
-
-			> let mix = lostNumbers ++ cards
-
-			> mix
-			[4,8,15,16,23,42,3,7,12]
-
-			> let lostNumbers = [13,666,1488]
-		code.hs.fragment.
-			> mix ?
-		code.hs.fragment.
-			[4,8,15,16,23,42,3,7,12]
-		code.hs.fragment.
-			> [1, "Гарри Поттер", 16.5] ?
+  h4 Строки
+  p Строка – это список символов
+  pre
+    code.hs.
+      > "Марьванна"
+      "Марьванна"
+      it :: [Char]
+    code.hs.fragment.
+      > 'М':"арьванна"
+      > ['М','а','р','ь','в','а','н','н','а']
+      -- про списки ниже!
+    code.hs.fragment.
+      hello s = "Hello, " ++ s ++ "!"
+      > hello "Марьванна"
+      "Hello, \1052\1072\1088\1100\1074\1072\1085\1085\1072!"
 
 section
-	h4 Списки
-	pre
-		code.hs.
-			> []
-			it :: [a]
-
-			> [1, 13, 666]
-			it :: [Integer]
-
-			> [[1, 2], [3, 4]]
-			it :: [[Integer]]
-
-			> [[1, 2], [3, 4]] ++ [[5, 6]]
-			it :: [[Integer]]
-
-			> [[], []]
-			it :: [[a]]
-		code.hs.fragment.
-			> [1, [2,3,4]] ?
-		code.hs.fragment.
-			-- ничего дельного
+  h4 Типы функций
+  pre
+    code.hs.
+      > :t hello
+      hello :: [Char] -> [Char]
+    code.hs.fragment.
+      > :t fac
+      fac :: (Eq a, Num a) => a -> a
+      -- ограничение - контекст (классы типов)
+    code.hs.fragment.
+      > :t max
+      max :: Ord a => a -> a -> a
+    code.hs.fragment.
+      > :t squareIfLess5
+      squareIfLess5 :: (Num a, Ord a) => a -> a
 
 section
-	h4 Оператор пары
-	pre
-		code.hs.
-			> 3 : mix
-			[3,4,8,15,16,23,42,3,7,12]
-		code.hs.fragment.
-			> [3] : [1, 3, 4]
-		code.hs.fragment.
-			--фигвам
-		code.hs.fragment.
-			> [3] : [[5, 6]]
-			it :: [[Integer]]
+  h4 Префикс, суффикс, инфикс
+  pre
+    code.hs.
+      (sumWithSquareOf) x y = x + square y
 
-			> mix!!5 –- получение элемента
-			42
-		code.hs.fragment.
-			> 13 : [] ?
+      > 3 `sumWithSquareOf` 5
+      28
+      > (sumWithSquareOf) 3 5
+      28
+    code.hs.fragment.
+      import Prelude hiding ((+))
+      x + y = x – y
+      > 8 + 3
+      5
+    code.hs.fragment.
+      > (-) 23 13
+      10
+      > :t (-)
+      (-) :: Num a => a -> a -> a
 
-section
-	h4 Списки
-	p Список – это
-	ul
-		li Конструктор списка (пустой список): []
-		li Набор элементов одного типа
-		li Оператор пары
-	pre
-		code.hs 1 : 2 : 3 : 4 : 5 : []
-	p Всё остальное – синтаксический сахар
+  p.fragment Пригодится для ФВП
 
 section
-	h4 Работа со списками
-	pre
-		code.hs.
-			> head [1..5] -– [1, 2, 3, 4, 5]
-			1
-			> head []
-		code.hs.fragment.
-			*** Exception: Prelude.head: empty list
-			> head [13] ?
-		code.hs.fragment.
-			> tail [1..5]
-			[2, 3, 4, 5]
-			> last [1..5]
-			5
-			> init [1..5]
-			[1, 2, 3, 4]
-			> length [2..6]
-			5
-			> null [1..5]
-			False
-			> null []
-			True
+  h4 Списки
+  pre
+    code.hs.
+      > let lostNumbers = [4,8,15,16,23,42]
+
+      > let cards = [3,7,12]
+
+      > let mix = lostNumbers ++ cards
+
+      > mix
+      [4,8,15,16,23,42,3,7,12]
+
+      > let lostNumbers = [13,666,1488]
+    code.hs.fragment.
+      > mix ?
+    code.hs.fragment.
+      [4,8,15,16,23,42,3,7,12]
+    code.hs.fragment.
+      > [1, "Гарри Поттер", 16.5] ?
 
 section
-	h4 Работа со списками
-	pre
-		code.hs.
-			null' x = if (x=[]) then True else False
-			или
-			null' [] = True
-			null' _ = False
+  h4 Списки
+  pre
+    code.hs.
+      > []
+      it :: [a]
 
-			>:t null'
-			null :: [a] -> Bool
+      > [1, 13, 666]
+      it :: [Integer]
 
-			> take 4 [1..10]
-			[1, 2, 3, 4]
-			> take 4 [1..]
-			[1, 2, 3, 4]
-			> [1..] ?
+      > [[1, 2], [3, 4]]
+      it :: [[Integer]]
 
-section
-	h4 Работа со списками
-	pre
-		code.hs.
-			> drop 4 [1..10]
-			[5, 6, 7, 8, 9, 10]
-			> take 4 (drop 7 "Hello, dude!")
-			"dude"
-			> drop 666 [1..10]
-			[]
-			> drop 4 [1..] ?
+      > [[1, 2], [3, 4]] ++ [[5, 6]]
+      it :: [[Integer]]
 
-			> minimum [10, 2, 5, -1, 99]
-			-1
-			> sum [1..10]
-			55
-			> product [1..10]
-			3628800
-			-- hmmm
+      > [[], []]
+      it :: [[a]]
+    code.hs.fragment.
+      > [1, [2,3,4]] ?
+    code.hs.fragment.
+      -- ничего дельного
 
 section
-	h4 Работа со списками
-	pre
-		code.hs.
-			fac n = product [1..n]
-			> fac 6
-			720
+  h4 Оператор пары
+  pre
+    code.hs.
+      > 3 : mix
+      [3,4,8,15,16,23,42,3,7,12]
+    code.hs.fragment.
+      > [3] : [1, 3, 4]
+    code.hs.fragment.
+      --фигвам
+    code.hs.fragment.
+      > [3] : [[5, 6]]
+      it :: [[Integer]]
 
-			> elem 4 [1..10]
-			True
-			> elem 666 [1..10]
-			False
-			> 'o' `elem` "balloooon"
-			True
-
-section
-	h4 Генерация списков
-	pre
-		code.hs.
-			> [1,3..20]
-			[1,3,5,7,9,11,13,15,17,19]
-			> ['a'..'z']
-			"abcdefghijklmnopqrstuvwxyz"
-
-			> ['a'..] ?
-			> [0.1, 0.3 .. 1]
-			[0.1,0.3,0.5,0.7,0.8999999999999999,1.0999999999999999]
-
-			> take 11 (cycle "LOL ")
-			"LOL LOL LOL"
-
-			> take 10 (repeat 5)
-			[5,5,5,5,5,5,5,5,5,5]
-			> take 10 [5,5..]
-			[5,5,5,5,5,5,5,5,5,5]
+      > mix!!5 –- получение элемента
+      42
+    code.hs.fragment.
+      > 13 : [] ?
 
 section
-	h4 Генерация списков
-	pre
-		code.hs.
-			> replicate 10 5
-			[5,5,5,5,5,5,5,5,5,5]
-			> let replicate' how what = take how (repeat what)
-		p let smth = ...
+  h4 Списки
+  p Список – это
+  ul
+    li Конструктор списка (пустой список): []
+    li Набор элементов одного типа
+    li Оператор пары
+  pre
+    code.hs 1 : 2 : 3 : 4 : 5 : []
+  p Всё остальное – синтаксический сахар
 
 section
-	h4 Генерация списков
-	pre
-		code.hs.
-			> [ a*a | a <- [1..10] ]
-			[1,4,9,16,25,36,49,64,81,100]
-
-			> [ [a,b] | a <- [1..3], b <- [3..7] ]
-			[[1,3],[1,4],[1,5],[1,6],[1,7],
-				[2,3],[2,4],[2,5],[2,6],[2,7],
-					[3,3],[3,4],[3,5],[3,6],[3,7]]
-
-			> [ [a,b] | a <- [1..3], b <- [3..7], 5 == a + b ]
-			[[1,4],[2,3]]
-			boomBangs xs =
-				[ if x < 10 then "BOOM!" else "BANG!" | x <- xs, odd x]
-			> boomBangs [7..13]
-			["BOOM!","BOOM!","BANG!","BANG!"]
-
-section
-	h4 Списки. Лень
-	pre
-		code.js.
-			for (let a = [], i = 0; i < 100000000000; i++) {
-				a.push(i);
-			}
-	pre
-		code.hs.fragment.
-			> let a = [1..100000000000]
-			-- и.. ничего
-		code.hs.fragment.
-			> let b = [ div 10 x | x <- [5,4..0] ]
-			> take 5 b ?
-			> take 6 b ?
+  h4 Работа со списками
+  pre
+    code.hs.
+      > head [1..5] -– [1, 2, 3, 4, 5]
+      1
+      > head []
+    code.hs.fragment.
+      *** Exception: Prelude.head: empty list
+      > head [13] ?
+    code.hs.fragment.
+      > tail [1..5]
+      [2, 3, 4, 5]
+      > last [1..5]
+      5
+      > init [1..5]
+      [1, 2, 3, 4]
+      > length [2..6]
+      5
+      > null [1..5]
+      False
+      > null []
+      True
 
 section
-	h4 Генерация списков
-	p Теорема ферма
-	pre
-		code.hs.
-			-- списки
-			let rightTriangles = [[a,b,c] |
-				c <- [1..9], b <- [1..c], a <- [1..b], a^2 + b^2 == c^2]
+  h4 Работа со списками
+  pre
+    code.hs.
+      null' x = if (x=[]) then True else False
+      или
+      null' [] = True
+      null' _ = False
 
-			-- кортежи
-			let rightTriangles = [(a,b,c) |
-				c <- [1..9], b <- [1..c], a <- [1..b], a^2 + b^2 == c^2]
+      >:t null'
+      null :: [a] -> Bool
 
-section
-	h4 Кортежи
-	pre
-		code.hs.
-			> (1,2)
-			(1,2)
-			> ("Гарри Поттер", 13, 2.5)
-			("Гарри Поттер", 13, 2.5)
-			> fst (1,2)
-			1
-			> snd (1,2)
-			2
-			> fst (1,2,3) ?
-			> let (a,b,c) = (1,2,3)
-				-- (сопоставление с образцом, 3с. ниже)
-			> b
-			2
-			> [("Гарри Поттер", 13, 2.5),("Колобок", 1, 55.5)]
+      > take 4 [1..10]
+      [1, 2, 3, 4]
+      > take 4 [1..]
+      [1, 2, 3, 4]
+      > [1..] ?
 
 section
-	h4 Синонимы типов
-	pre
-		code.hs.
-			> type String = [Char]
+  h4 Работа со списками
+  pre
+    code.hs.
+      > drop 4 [1..10]
+      [5, 6, 7, 8, 9, 10]
+      > take 4 (drop 7 "Hello, dude!")
+      "dude"
+      > drop 666 [1..10]
+      []
+      > drop 4 [1..] ?
 
-			> type Name = String
-			> type Person = (Name, Integer, Float)
-			> let a = ("ГП", 12, 3.4)::Person
-			> :t a
-			a :: Person
-			> :t [a, ("ГГ", 19, 0.2)]
-			[a,("ГГ", 19, 0.2)] :: [Person]
-
-		p Больше – создание новых типов
-
-section
-	h4 Задание
-	p.
-		Опишите функцию, которая для данного числа n создает список
-		из всех попарных сумм чисел от 1 до n.
-		( Т.е. [1+1, 1+2, 1+3, ..., 1+n, 2+1, 2+2, ..., n+n]
-			- всего n*n элементов)
+      > minimum [10, 2, 5, -1, 99]
+      -1
+      > sum [1..10]
+      55
+      > product [1..10]
+      3628800
+      -- hmmm
 
 section
-	h4 Сопоставление с образцом
-	pre
-		code.hs.
-			sayWhat :: Int -> String
-			sayWhat 1 = "место встречи изменить нельзя"
-			sayWhat 2 = "как обычно"
-			sayWhat 3 = "суббота"
-			sayWhat 4 = "я ничего не знаю"
-			sayWhat 5 = "ненавижу хаскель, заберите меня отсюда"
+  h4 Работа со списками
+  pre
+    code.hs.
+      fac n = product [1..n]
+      > fac 6
+      720
 
-			> sayWhat 3
-		code.hs.fragment.
-			Чего не хватает?
-		code.hs.fragment.
-			Non-exhaustive patterns in function sayWhat
+      > elem 4 [1..10]
+      True
+      > elem 666 [1..10]
+      False
+      > 'o' `elem` "balloooon"
+      True
 
 section
-	h4 Сопоставление с образцом
-	pre
-		code.hs.
-			sayWhat :: Int -> String  -- кстати, тип можно не писать!
-			sayWhat 1 = "место встречи изменить нельзя"
-			sayWhat 2 = "как обычно"
-			sayWhat 3 = "суббота"
-			sayWhat 4 = "я ничего не знаю"
-			sayWhat 5 = "ненавижу хаскель, заберите меня отсюда"
-			sayWhat _ = "кто здесь?"
+  h4 Генерация списков
+  pre
+    code.hs.
+      > [1,3..20]
+      [1,3,5,7,9,11,13,15,17,19]
+      > ['a'..'z']
+      "abcdefghijklmnopqrstuvwxyz"
 
-			> sayWhat 3
+      > ['a'..] ?
+      > [0.1, 0.3 .. 1]
+      [0.1,0.3,0.5,0.7,0.8999999999999999,1.0999999999999999]
 
-section
-	h4 Сопоставление с образцом
-	pre
-		code.hs.
-			sayWhat :: Int -> String
-			sayWhat 1 = "место встречи изменить нельзя"
-			sayWhat 2 = "как обычно"
-			sayWhat _ = "кто здесь?"
-			sayWhat 3 = "суббота"
-			sayWhat 4 = "я ничего не знаю"
-			sayWhat 5 = "ненавижу хаскель, заберите меня отсюда"
-		code.hs.fragment.
-			> sayWhat 3
-			> sayWhat 1
-		code.hs.fragment.
-			Pattern match(es) are overlapped
+      > take 11 (cycle "LOL ")
+      "LOL LOL LOL"
+
+      > take 10 (repeat 5)
+      [5,5,5,5,5,5,5,5,5,5]
+      > take 10 [5,5..]
+      [5,5,5,5,5,5,5,5,5,5]
 
 section
-	h4 Сопоставление кортежей
-	pre
-		code.hs.
-			opinion :: (Int, String) -> String
-			opinion man =
-				"Я, " ++ snd man ++ " считаю \"" ++
-				sayWhat (fst man) ++ "\""
-			-- обратите внимание на скобки
-
-			> opinion (5, "Пупкин Васёк")
-
-			opinion :: (Int, String) -> String
-			opinion (num, name) =
-				"Я, " ++ name ++ " считаю \"" ++ sayWhat num ++ "\""
+  h4 Генерация списков
+  pre
+    code.hs.
+      > replicate 10 5
+      [5,5,5,5,5,5,5,5,5,5]
+      > let replicate' how what = take how (repeat what)
+    p let smth = ...
 
 section
-	h4 read-show
-	pre
-		code.hs.
-			> show 1
-			"1"
-			> show (2, "Пупкин Васёк")
-			"(2, \"Пупкин Васёк\")"
+  h4 Генерация списков
+  pre
+    code.hs.
+      > [ a*a | a <- [1..10] ]
+      [1,4,9,16,25,36,49,64,81,100]
 
-			> read "True" || False
-			True
+      > [ [a,b] | a <- [1..3], b <- [3..7] ]
+      [[1,3],[1,4],[1,5],[1,6],[1,7],
+        [2,3],[2,4],[2,5],[2,6],[2,7],
+          [3,3],[3,4],[3,5],[3,6],[3,7]]
 
-section
-	h4 Охранные выражения
-	ul
-		li похожи на switch/case
-		li слоник
-	pre
-		code.hs.
-			bmiTell :: (RealFloat a) => a -> a -> String
-			bmiTell weight height
-				| weight / height ^ 2 <= 18.5 =
-					"You're underweight, you emo, you!"
-				| weight / height ^ 2 <= 25.0 =
-					"You're normal. Pffft, I bet you're ugly!"
-				| weight / height ^ 2 <= 30.0 =
-					"You're fat! Lose some weight, fatty!"
-				| otherwise =
-					"You're a whale, congratulations!"
+      > [ [a,b] | a <- [1..3], b <- [3..7], 5 == a + b ]
+      [[1,4],[2,3]]
+      boomBangs xs =
+        [ if x < 10 then "BOOM!" else "BANG!" | x <- xs, odd x]
+      > boomBangs [7..13]
+      ["BOOM!","BOOM!","BANG!","BANG!"]
 
 section
-	h4 Охранные выражения
-	pre
-		code.hs.
-			bmiTell :: (RealFloat a) => a -> a -> String
-			bmiTell weight height
-				| bmi <= 18.5 =
-					"You're underweight, you emo, you!"
-				| bmi <= 25.0 =
-					"You're normal. Pffft, I bet you're ugly!"
-				| bmi <= 30.0 =
-					"You're fat! Lose some weight, fatty!"
-				| otherwise =
-					"You're a whale, congratulations!"
-				where bmi = weight / height ^ 2
+  h4 Списки. Лень
+  pre
+    code.js.
+      for (let a = [], i = 0; i < 100000000000; i++) {
+        a.push(i);
+      }
+  pre
+    code.hs.fragment.
+      > let a = [1..100000000000]
+      -- и.. ничего
+    code.hs.fragment.
+      > let z = map (\x -> x * x) a
+    code.hs.fragment.
+      > let b = [ div 10 x | x <- [5,4..0] ]
+      > take 5 b ?
+      > take 6 b ?
 
 section
-	h4 Охранные выражения
-	pre
-		code.hs.
-			bmiTell :: (RealFloat a) => a -> a -> String
-			bmiTell weight height
-				| bmi <= skinny =
-					"You're underweight, you emo, you!"
-				| bmi <= normal =
-					"You're normal.Pffft, I bet you're ugly!"
-				| bmi <= fat =
-					"You're fat! Lose some weight, fatty!"
-				| otherwise =
-					"You're a whale, congratulations!"
-				where
-					bmi = weight / height ^ 2
-					skinny = 18.5
-					normal = 25.0
-					fat = 30.0
+  h4 Генерация списков
+  p Теорема ферма
+  pre
+    code.hs.
+      -- списки
+      let rightTriangles = [[a,b,c] |
+        c <- [1..9], b <- [1..c], a <- [1..b], a^2 + b^2 == c^2]
+
+      -- кортежи
+      let rightTriangles = [(a,b,c) |
+        c <- [1..9], b <- [1..c], a <- [1..b], a^2 + b^2 == c^2]
 
 section
-	h4 Охранные выражения
-	pre
-		code.hs.
-			bmiTell :: (RealFloat a) => a -> a -> String
-			bmiTell weight height
-				| bmi <= skinny =
-			"You're underweight, you emo, you!"
-				| bmi <= normal =
-			"You're normal.Pffft, I bet you're ugly!"
-				| bmi <= fat =
-			"You're fat! Lose some weight, fatty!"
-				| otherwise =
-			"You're a whale, congratulations!"
-				where (skinny, normal, fat) = (18.5, 25.0, 30.0)
+  h4 Кортежи
+  pre
+    code.hs.
+      > (1,2)
+      (1,2)
+      > ("Гарри Поттер", 13, 2.5)
+      ("Гарри Поттер", 13, 2.5)
+      > fst (1,2)
+      1
+      > snd (1,2)
+      2
+      > fst (1,2,3) ?
+      > let (a,b,c) = (1,2,3)
+        -- (сопоставление с образцом, 3с. ниже)
+      > b
+      2
+      > [("Гарри Поттер", 13, 2.5),("Колобок", 1, 55.5)]
 
 section
-	h4 Композиционный стиль
-	pre
-		code.hs.
-			> [let square x = x * x in (square 5, square 3, square 2)]
+  h4 Синонимы типов
+  pre
+    code.hs.
+      > type String = [Char]
 
-			> let square x = x * x in map square [5,3,2]
+      > type Name = String
+      > type Person = (Name, Integer, Float)
+      > let a = ("ГП", 12, 3.4)::Person
+      > :t a
+      a :: Person
+      > :t [a, ("ГГ", 19, 0.2)]
+      [a,("ГГ", 19, 0.2)] :: [Person]
 
-			> (let a = 100; b = 200; c = 300 in a*b*c, let foo="Hey "; bar = "there!" in foo ++ bar)
-
-			some =
-				let opinion man = "Я, " ++ snd man ++ " считаю \"" ++ sayWhat (fst man) ++ "\""
-						dude = (5, "Пупкин Васёк")
-				in opinion dude
+    p Больше – создание новых типов
 
 section
-	h4 case
-	pre
-		code.hs.
-			sayWhat :: Int -> String
-			sayWhat pos = "Моё мнение – " ++
-				сase pos of 1 -> "оставить как есть"
-										2 -> "как обычно"
-										3 -> "суббота"
-										4 -> "я ничего не знаю"
-										5 -> "ненавижу хаскель, заберите меня отсюда"
-										_ -> "кто здесь?"
+  h4 Задание
+  p.
+    Опишите функцию, которая для данного числа n создает список
+    из всех попарных сумм чисел от 1 до n.
+    ( Т.е. [1+1, 1+2, 1+3, ..., 1+n, 2+1, 2+2, ..., n+n]
+      - всего n*n элементов)
+
+section
+  h4 Сопоставление с образцом
+  pre
+    code.hs.
+      sayWhat :: Int -> String
+      sayWhat 1 = "место встречи изменить нельзя"
+      sayWhat 2 = "как обычно"
+      sayWhat 3 = "суббота"
+      sayWhat 4 = "я ничего не знаю"
+      sayWhat 5 = "ненавижу хаскель, заберите меня отсюда"
+
+      > sayWhat 3
+    code.hs.fragment.
+      Чего не хватает?
+    code.hs.fragment.
+      Non-exhaustive patterns in function sayWhat
+
+section
+  h4 Сопоставление с образцом
+  pre
+    code.hs.
+      sayWhat :: Int -> String  -- кстати, тип можно не писать!
+      sayWhat 1 = "место встречи изменить нельзя"
+      sayWhat 2 = "как обычно"
+      sayWhat 3 = "суббота"
+      sayWhat 4 = "я ничего не знаю"
+      sayWhat 5 = "ненавижу хаскель, заберите меня отсюда"
+      sayWhat _ = "кто здесь?"
+
+      > sayWhat 3
+
+section
+  h4 Сопоставление с образцом
+  pre
+    code.hs.
+      sayWhat :: Int -> String
+      sayWhat 1 = "место встречи изменить нельзя"
+      sayWhat 2 = "как обычно"
+      sayWhat _ = "кто здесь?"
+      sayWhat 3 = "суббота"
+      sayWhat 4 = "я ничего не знаю"
+      sayWhat 5 = "ненавижу хаскель, заберите меня отсюда"
+    code.hs.fragment.
+      > sayWhat 3
+      > sayWhat 1
+    code.hs.fragment.
+      Pattern match(es) are overlapped
+
+section
+  h4 Сопоставление кортежей
+  pre
+    code.hs.
+      opinion :: (Int, String) -> String
+      opinion man =
+        "Я, " ++ snd man ++ " считаю \"" ++
+        sayWhat (fst man) ++ "\""
+      -- обратите внимание на скобки
+
+      > opinion (5, "Пупкин Васёк")
+
+      opinion :: (Int, String) -> String
+      opinion (num, name) =
+        "Я, " ++ name ++ " считаю \"" ++ sayWhat num ++ "\""
+
+section
+  h4 read-show
+  pre
+    code.hs.
+      > show 1
+      "1"
+      > show (2, "Пупкин Васёк")
+      "(2, \"Пупкин Васёк\")"
+
+      > read "True" || False
+      True
+
+section
+  h4 Охранные выражения
+  ul
+    li похожи на switch/case
+    li слоник
+  pre
+    code.hs.
+      bmiTell :: (RealFloat a) => a -> a -> String
+      bmiTell weight height
+        | weight / height ^ 2 <= 18.5 =
+          "You're underweight, you emo, you!"
+        | weight / height ^ 2 <= 25.0 =
+          "You're normal. Pffft, I bet you're ugly!"
+        | weight / height ^ 2 <= 30.0 =
+          "You're fat! Lose some weight, fatty!"
+        | otherwise =
+          "You're a whale, congratulations!"
+
+section
+  h4 Охранные выражения
+  pre
+    code.hs.
+      bmiTell :: (RealFloat a) => a -> a -> String
+      bmiTell weight height
+        | bmi <= 18.5 =
+          "You're underweight, you emo, you!"
+        | bmi <= 25.0 =
+          "You're normal. Pffft, I bet you're ugly!"
+        | bmi <= 30.0 =
+          "You're fat! Lose some weight, fatty!"
+        | otherwise =
+          "You're a whale, congratulations!"
+        where bmi = weight / height ^ 2
+
+section
+  h4 Охранные выражения
+  pre
+    code.hs.
+      bmiTell :: (RealFloat a) => a -> a -> String
+      bmiTell weight height
+        | bmi <= skinny =
+          "You're underweight, you emo, you!"
+        | bmi <= normal =
+          "You're normal.Pffft, I bet you're ugly!"
+        | bmi <= fat =
+          "You're fat! Lose some weight, fatty!"
+        | otherwise =
+          "You're a whale, congratulations!"
+        where
+          bmi = weight / height ^ 2
+          skinny = 18.5
+          normal = 25.0
+          fat = 30.0
+
+section
+  h4 Охранные выражения
+  pre
+    code.hs.
+      bmiTell :: (RealFloat a) => a -> a -> String
+      bmiTell weight height
+        | bmi <= skinny =
+      "You're underweight, you emo, you!"
+        | bmi <= normal =
+      "You're normal.Pffft, I bet you're ugly!"
+        | bmi <= fat =
+      "You're fat! Lose some weight, fatty!"
+        | otherwise =
+      "You're a whale, congratulations!"
+        where (skinny, normal, fat) = (18.5, 25.0, 30.0)
+
+section
+  h4 Композиционный стиль
+  pre
+    code.hs.
+      > [let square x = x * x in (square 5, square 3, square 2)]
+
+      > let square x = x * x in map square [5,3,2]
+
+      > (let a = 100; b = 200; c = 300 in a*b*c, let foo="Hey "; bar = "there!" in foo ++ bar)
+
+      some =
+        let opinion man = "Я, " ++ snd man ++ " считаю \"" ++ sayWhat (fst man) ++ "\""
+            dude = (5, "Пупкин Васёк")
+        in opinion dude
+
+section
+  h4 case
+  pre
+    code.hs.
+      sayWhat :: Int -> String
+      sayWhat pos = "Моё мнение – " ++
+        сase pos of 1 -> "оставить как есть"
+          2 -> "как обычно"
+          3 -> "суббота"
+          4 -> "я ничего не знаю"
+          5 -> "ненавижу хаскель, заберите меня отсюда"
+          _ -> "кто здесь?"
