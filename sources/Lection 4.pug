@@ -1,0 +1,221 @@
+section
+  h4 Рекурсия
+  ul
+    li Целочисленный остаток от деления: rem'
+    li Значение целочисленного деления: quot'
+  pre
+    code.hs.
+      let sign a
+        | a > 0 = 1
+        | a == 0 = 0
+        | otherwise = -1
+
+section
+  h4 Рекурсия
+  pre
+    code.hs.
+      rem' a b =
+        let rem'' a b
+            | a < b = a
+            | otherwise = rem'' (a-b) b
+        in
+        sign' a * sign' b * rem'' (abs a) (abs b)
+
+section
+  h4 Рекурсия. Синтаксис
+  pre
+    code.hs.
+      rem' a b =
+        let rem'' a b
+              | a < b = a
+              | otherwise = rem'' (a-b) b
+            c = a
+            d = b
+        in
+          sign' c * sign' d * rem'' (abs c) (abs d)
+
+section
+  h4 Рекурсия. Синтаксис
+  pre
+    code.hs.
+      rem' a b =
+        let
+          rem'' a b
+            | a < b = a
+            | otherwise = rem'' (a-b) b
+          c = a
+          d = b
+        in
+          sign' c * sign' d * rem'' (abs c) (abs d)
+
+section
+  h4 Рекурсия. Синтаксис
+  pre
+    code.hs.
+      rem' a b =
+        let
+          rem'' a b | a < b = a | otherwise = rem'' (a-b) b; c = a; d = b
+        in
+          sign' c * sign' d * rem'' (abs c) (abs d)
+
+section
+  h4 Рекурсия
+  pre
+    code.hs.
+      quot' a b
+        | a < b = 0
+        | otherwise = 1 + quot' (a-b) b
+
+  p Ограничения по вкусу
+
+section
+  h4 Рекурсия
+  p Наибольший общий делитель: gcd
+
+section
+  h4 Рекурсивные структуры данных
+  h1 Списки
+
+section
+  h4 Списки. Сопоставление с образцом
+  pre
+    code.hs.
+      isEmpty :: [a] -> Boolean
+      isEmpty [] = True
+      isEmpty _ = False
+
+      tell :: (Show a) => [a] -> String
+      tell [] = "Список пуст"
+      tell (x:[]) = "В списке только один элемент: " ++ show x
+      tell (x:y:[]) = "Два элемента: " ++ show x ++ " and " ++ show y
+      tell (x:y:_) = "Много. Первые 2: " ++ show x ++ " and " ++ show y
+
+section
+  h4 Списки
+  pre
+    code.hs.
+      sum' :: (Num a) => [a] -> a
+      sum' [] = 0
+      sum' (x:xs) = x + sum' xs
+
+      max' :: (Ord a) => [a] -> a
+      max' [] = error "У пустого списка нет максимального эл-та!"
+      max' [x] = x
+      max' (x:xs) = max x (max' xs)
+
+  p Типы можно не писать, но это дурной тон
+  p Самостоятельно length, с указанием типа
+
+section
+  h4 Списки
+  ul
+    li replicate' :: (Num i, Ord i) => i -> a -> [a]
+    li take' :: (Num i, Ord i) => i -> [a] -> [a]
+    li reverse' :: [a] -> [a]
+    li repeat' :: a -> [a]
+    li elem' :: (Eq a) => a -> [a] -> Bool
+    li zip' :: [a] -> [b] -> [(a,b)] -- зачем он нужен?
+    li append' :: [a] -> [a] -> [a]
+
+section
+  h4 Списки
+  pre
+    code.hs.
+      replicate' :: (Num i, Ord i) => i -> a -> [a]
+      replicate' i _ | i < 1 = []
+      replicate' i a = a : (replicate' (i-1) a)
+
+section
+  h4 Списки
+  pre
+    code.hs.
+      take' :: (Num i, Ord i) => i -> [a] -> [a]
+      take' i list | i < 1 = []
+      take' i (x:xs) = x : (take' (i-1) xs)
+
+section
+  h4 Списки
+  pre
+    code.hs.
+      repeat' :: a -> [a]
+      repeat' a = a : (repeat a)
+
+section
+  h4 Списки
+  pre
+    code.hs.
+      elem' :: (Eq a) => a -> [a] -> Bool
+      elem' _ [] = False
+      elem' a (x:xs)
+        | a == x = True
+        | otherwise = elem' a xs
+
+section
+  h4 Списки
+  pre
+    code.hs.
+      zip' :: [a] -> [b] -> [(a,b)]
+      zip' [] _ = []
+      zip' _ [] = []
+      zip' (x:xs) (y:ys) = (x,y) : (zip' xs ys)
+
+section
+  h4 Списки
+  pre
+    code.hs.
+      append' :: [a] -> [a] -> [a]
+      append' [] list = list
+      append' (x:xs) list = x : (append' xs list)
+
+section
+  h4 Zip
+  pre
+    code.hs.
+      > zip [1..] ["Трус", "Балбес", "Бывалый"]
+      [(1, "Трус"), (2, "Балбес"), (3, "Бывалый")]
+
+      > zip [1..] ['a'..'z']
+      [(1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(6,'f'),(7,'g'),(8,'h'),(9,'i'),(10,'j'),(11,'k'),(12,'l'),(13,'m'),(14,'n'),(15,'o'),(16,'p'),(17,'q'),(18,'r'),(19,'s'),(20,'t'),(21,'u'),(22,'v'),(23,'w'),(24,'x'),(25,'y'),(26,'z')]
+
+      > ones = 1 : ones
+
+section
+  h4 KP
+  p.
+    Функция delete :: Char -> String -> String, которая принимает на вход строку и символ и возвращает
+    строку, в которой удалены все вхождения символа. Пример: delete ’l’ "Hello world!" должно возвращать "Heo word!".
+
+  p.
+    Функция substitute :: Char -> Char -> String -> String,
+    которая заменяет в строке указанный символ на заданный. Пример: substitute ’e’ ’i’ "eigenvalue" возвращает
+    "iiginvalui"
+
+section
+  h4 Святой факториал
+  pre
+    code.hs.
+      fac 0 = 1
+      fac n = n * (fac (n-1))
+      -- Stack overflow
+
+section
+  h4 Хвостовая рекурсия
+  pre
+    code.hs.
+      fac' a 0 = a
+      fac' a n = fac' (a*n) (n-1)
+      fac = fac' 1
+
+      -- same as
+      fac n = fac' 1 n
+
+section
+  h4 Хвостовая рекурсия
+  pre
+    code.hs.
+      fac n =
+        let
+          fac' a 0 = a
+          fac' a n = fac' (a*n) (n-1)
+        in
+        fac' 1 n
