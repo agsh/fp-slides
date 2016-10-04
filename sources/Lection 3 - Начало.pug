@@ -631,14 +631,16 @@ section
       bmiTell :: (RealFloat a) => a -> a -> String
       bmiTell weight height
         | bmi <= skinny =
-      "You're underweight, you emo, you!"
+          "You're underweight, you emo, you!"
         | bmi <= normal =
-      "You're normal.Pffft, I bet you're ugly!"
+          "You're normal.Pffft, I bet you're ugly!"
         | bmi <= fat =
-      "You're fat! Lose some weight, fatty!"
+          "You're fat! Lose some weight, fatty!"
         | otherwise =
-      "You're a whale, congratulations!"
-        where (skinny, normal, fat) = (18.5, 25.0, 30.0)
+          "You're a whale, congratulations!"
+        where
+          bmi = weight / height ^ 2
+          (skinny, normal, fat) = (18.5, 25.0, 30.0)
 
 section
   h4 Композиционный стиль
