@@ -275,7 +275,7 @@ section
   pre
     code.hs.
       balance' "" a = a == 0
-      balance _ n | n < 0 = False
+      balance' _ n | n < 0 = False
       balance' (x:xs) n = balance' xs m
         where m = case x of '(' -> n+1
                             ')' -> n-1
