@@ -117,7 +117,7 @@ section
 section
   h4 quicksort C++
   pre(style="font-size: 0.4em; width: 100%")
-    code.
+    code.cpp.
       public static void qs(int[] A, int low, int high) {
         int i = low;
         int j = high;
@@ -140,10 +140,10 @@ section
 section
   h4 quicksort haskell
   pre
-    code.
-    | qs [] = []
-    | qs (x:xs) = (qs l) ++ [x] ++ (qs r)
-    |   where (l,r) = partition (<x) xs
+    code.hs.
+     qs [] = []
+     qs (x:xs) = (qs l) ++ [x] ++ (qs r)
+       where (l,r) = partition (&lt;x) xs
 
 section
   h4 Нитшяки

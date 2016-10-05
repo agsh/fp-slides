@@ -175,7 +175,11 @@ section
       [(1, "Трус"), (2, "Балбес"), (3, "Бывалый")]
 
       > zip [1..] ['a'..'z']
-      [(1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(6,'f'),(7,'g'),(8,'h'),(9,'i'),(10,'j'),(11,'k'),(12,'l'),(13,'m'),(14,'n'),(15,'o'),(16,'p'),(17,'q'),(18,'r'),(19,'s'),(20,'t'),(21,'u'),(22,'v'),(23,'w'),(24,'x'),(25,'y'),(26,'z')]
+      [(1,'a'),(2,'b'),(3,'c'),(4,'d'),(5,'e'),(6,'f'),
+      (7,'g'),(8,'h'),(9,'i'),(10,'j'),(11,'k'),(12,'l'),
+      (13,'m'),(14,'n'),(15,'o'),(16,'p'),(17,'q'),(18,'r'),
+      (19,'s'),(20,'t'),(21,'u'),(22,'v'),(23,'w'),(24,'x'),
+      (25,'y'),(26,'z')]
 
       > ones = 1 : ones
 
@@ -219,3 +223,74 @@ section
           fac' a n = fac' (a*n) (n-1)
         in
         fac' 1 n
+
+section
+  h4 Сами
+  p reverse n
+  p fib n
+
+section
+  pre
+    code.hs.
+      fib' a b 0 = a
+      fib' a b n = fib' b (a+b) (n-1)
+      fib n = fib' 1 1 n
+
+section
+  pre
+    code.hs.
+      reverse' list =
+        let
+          reverse'' [] acc = acc
+          reverse'' (x:xs) acc = reverse'' xs (x:acc)
+        in
+          reverse'' list []
+
+section
+  p.
+    Write a recursive function which verifies the balancing of parentheses in a string, which we represent as a List[Char] not a String. For example, the function should return true for the following strings:
+  p.
+    (if (zero? x) max (/ 1 x))
+    I told him (that it’s not (yet) done). (But he wasn’t listening)
+    The function should return false for the following strings:
+  p.
+    :-)
+    ())(
+    The last example shows that it’s not enough to verify that a string contains the same number of opening and closing parentheses.
+    balance :: String → Bool
+
+section
+  pre
+    code.hs.
+      balance' "" 0 = True
+      balance' "" _ = False
+      balance' (x:xs) n
+        | n < 0 = False
+        | x == '(' = balance' xs (n+1)
+        | x == ')' = balance' xs (n-1)
+        | otherwise = balance' xs n
+      balance str = balance' str 0
+
+section
+  pre
+    code.hs.
+      balance' "" a = a == 0
+      balance _ n | n < 0 = False
+      balance' (x:xs) n = balance' xs m
+        where m = case x of '(' -> n+1
+                            ')' -> n-1
+                            _ -> n
+      balance str = balance' str 0
+
+section
+  h4 Пред КР
+  p reverseAll — функция, получающая на вход списочную структуру и обращающая все её элементы, а также её саму.
+  p firstElem — функция, возвращающая номер первого вхождения заданного атома в список.
+
+section
+  h4 КР
+  p set — функция, возвращающая список из всех атомов, содержащихся в заданном списке. Каждый атом должен присутствовать в результирующем списке в единственном числе.
+  p freq — функция, возвращающая список пар (символ, частота). Каждая пара определяет атом из заданного списка и частоту его вхождения в этот список.
+
+section
+  h1 lab0
