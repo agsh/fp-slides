@@ -3,10 +3,23 @@ section
 	pre
 		code.hs.
 			putStrLn (show (1 + 1))
+section
+	h4 $ .
+	pre
+		code.hs.
+			Prelude> :t ($)
+			($) :: (a -> b) -> a -> b
 		code.hs.fragment.
 			putStrLn (show $ 1 + 1)
 			putStrLn $ show (1 + 1)
 			putStrLn $ show $ 1 + 1
+
+section
+	h4 $ .
+	pre
+		code.hs.fragment.
+			Prelude> :t (.)
+			(.) :: (b -> c) -> (a -> b) -> a -> c
 		code.hs.fragment.
 			(putStrLn . show) (1 + 1)
 			putStrLn . show $ 1 + 1
