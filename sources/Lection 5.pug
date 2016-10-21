@@ -121,19 +121,71 @@ section
       flip' :: (a -> b -> c) -> b -> a -> c
       flip' f = \x y -> f y x
 
-
+section
+  h4 Показать список
+  pre
+    code.hs.
+      map (\(x,y) -> show x ++ "). " ++ y) $ zip [1..]
+        ["Трус", "Балбес", "Бывалый"]
 
 section
-  h4 $ .
+  pre
+    code.hs.
+      calcDistance (x,y) (a,b) = sqrt (w^2 + h^2)
+      where (w,h) = (x-a, b-y)
+      points = [(1,1),(5,3),(2,5),(7,4),(5,5),(3,2),(0,4)]
+      sort [] = []
+      sort ((x,o):xs) =
+      let smallerSorted = sort (filter (\(y,o) -> y <= x) xs)
+      biggerSorted = sort (filter (\(y,o) -> y > x) xs)
+      in smallerSorted ++ [(x,o)] ++ biggerSorted
+      nearest3 dest = take 3 (sort (map (\p -> (calcDistance p dest, p)) points))
+
+section
+  pre
+    code.hs.
+      > nearest3 (2,2)
+      nearest3 dest = take 3
+       (filter (\(dist, p) -> dist < 2) (sort (map
+      (\p -> (calcDistance p
+       dest, p)) points)))
+      nearest3 dest = filter
+       (\(dist, p) -> dist < 2) (take 3 (sort (map
+      (\p -> (calcDistance p
+       dest, p)) points)))
+      > nearest3 (2,2)
+
+section
+  pre
+    code.js.
+      var metroStations = [{lat: 52.234, lng: 30.482, name:
+      'Kashirskaya'},..]
+      , calcDistance = function(point, station) {
+      station.dist = 180 * arctan ... // distance algorythm (mutable)
+      return station;
+      };
+      nearest3 = function(point) {
+      return metroStations
+      .map(function(m) {return calcDistance(point, m);})
+      .sort(function(a,b) {return a.dist > b .dist;})
+      .slice(0,3)
+      .filter(function(m) {return m.dist < 2000;})
+      };
+      nearest3({lattitude: 52.0, longitude: 31.0})
+
+section
+  h4 Применение функций
   pre
     code.hs.
       putStrLn (show (1 + 1))
 section
-  h4 $ .
+  h4 Применение функций
   pre
     code.hs.
-      Prelude> :t ($)
+      > :t ($)
       ($) :: (a -> b) -> a -> b
+      f $ x = f x
+      f (g (z x)) === f $ g $ z x правоассоцитивно
     code.hs.fragment.
       putStrLn (show $ 1 + 1)
       putStrLn $ show (1 + 1)
@@ -143,69 +195,87 @@ section
   h4 $ .
   pre
     code.hs.fragment.
-      Prelude> :t (.)
+      > :t (.)
       (.) :: (b -> c) -> (a -> b) -> a -> c
+      f . g = \x -> f (g x)
     code.hs.fragment.
       (putStrLn . show) (1 + 1)
       putStrLn . show $ 1 + 1
 
-section
-  pre
-    code.hs.
-      type Set = Int -> Bool
-      contains :: Set -> Int -> Bool
-      singletonSet :: Int -> Set
-      union :: Set -> Set -> Set
-      intersect :: Set -> Set -> Set
-      diff :: Set -> Set -> Set
-      filter' :: Set -> (Int -> Bool) -> Set
-      bounds = [-1000,1000]
-      forAll :: Set -> (Int -> Bool) -> Bool
-      exists :: Set -> (Int -> Bool) -> Bool
 
 section
+  h4 Применение функций
   pre
     code.hs.
-      type Set = Int -> Bool
-      a = (\a -> True)::Set
-
-      contains :: Set -> Int -> Bool
-      contains s a = s a
-
-      singletonSet :: Int -> Set
-      singletonSet = \b -> (\a -> a == b)
-      singletonSet b = \a -> a == b
-      singletonSet b = let
-        answer a = a==b
-        in answer
+      nearest3 dest = filter (\(dist, p) -> dist < 2) $ take 3 $ sort $ map (\p -> (calcDistance p dest,
+      p)) points
+      No more LISP!
+      nearest3 dest = filter (\(dist, p) -> dist < 2) (take 3 (sort (map (\p -> (calcDistance p dest, p))
+      points)))
+      > sum 9 (sum 6 (sum 3 1))
+      > sum 9 $ sum 6 $ sum 3 1
 
 section
+  h4 Композиция функций
   pre
     code.hs.
-      union :: Set -> Set -> Set
-      union a b = \c -> (contains b c) || (contains a c)
-
-      intersect :: Set -> Set -> Set
-      intersect a b = \c -> (contains b c) && (contains a c)
-
-      diff :: Set -> Set -> Set
-      diff a b = \c -> (contains a c) && (not (contains b c))
-
-      filter' :: Set -> (Int -> Bool) -> Set
-      filter' a f = \c -> (contains a c) && (f c)
+      > map (\xs -> negate (sum (tail xs))) [[1..5],[3..6],[1..7]]
+      [-14,-15,-27]
+      > map (negate . sum . tail) [[1..5],[3..6],[1..7]]
+      [-14,-15,-27]
 
 section
+  h4 Композиция функций
   pre
     code.hs.
-      forAll :: Set -> (Int -> Bool) -> Bool
-      forAll a f =
-        let
-          forAll' 1000 = True
-          forAll' acc =
-            if (contains a acc) && not (f acc)
-              then False
-              else forAll' (acc+1)
-        in forAll' (-1000)
+      nearest3 dest = take 3 . sort . map (\p -> (calcDistance p
+      dest, p))
+      main = do
+      putStr . show $ nearest3 (2,2) points
+      {-
+      main = do
+      putStrLn . show $ nearest3 (2,2) points
+      -}
 
-      exists :: Set -> (Int -> Bool) -> Bool
-      exists a f = not $ forAll a (not . f)
+section
+  h4 mapM
+  pre
+    code.hs.
+      main = do
+      mapM putStrLn ["adf\taff","dfaf\tsf","asdf\tf","asddf\tf"]
+      > main
+      adf   aff
+      dfaf  sf
+      asdf  f
+      asddf f
+      [(),(),(),()]
+      main = do
+        mapM putStrLn ["adf\taff","dfaf\tsf","asdf\tf","asddf\tf"]
+        return ()
+      main = do
+        mapM_ putStrLn ["adf\taff","dfaf\tsf","asdf\tf","asddf\tf"]
+
+section
+  h4 Task
+  p Числа Фиббоначе, бесконечный список
+  pre
+    code [1, 1, 2, 3, 5, 8, 13, ...]
+
+section
+  h4 KP
+  p Список треугольных чисел
+  p Список пирамидальных чисел
+  p.
+    n-е треугольное число tn равно количеству
+    одинаковых монет, из которых можно построить
+    равносторонний треугольник, на каждой стороне
+    которого укладывается n монет.
+  p.
+    n-е пирамидальное число pn равно количеству
+    одинаковых шаров, из которых можно построить
+    пирамиду с треугольным основанием, на каждой
+    стороне которой укладывается n шаров
+
+
+
+
