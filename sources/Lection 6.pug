@@ -1,0 +1,60 @@
+section
+  pre
+    code.hs.
+      type Set = Int -> Bool
+      contains :: Set -> Int -> Bool
+      singletonSet :: Int -> Set
+      union :: Set -> Set -> Set
+      intersect :: Set -> Set -> Set
+      diff :: Set -> Set -> Set
+      filter' :: Set -> (Int -> Bool) -> Set
+      bounds = [-1000,1000]
+      forAll :: Set -> (Int -> Bool) -> Bool
+      exists :: Set -> (Int -> Bool) -> Bool
+
+section
+  pre
+    code.hs.
+      type Set = Int -> Bool
+      a = (\a -> True)::Set
+
+      contains :: Set -> Int -> Bool
+      contains s a = s a
+
+      singletonSet :: Int -> Set
+      singletonSet = \b -> (\a -> a == b)
+      singletonSet b = \a -> a == b
+      singletonSet b = let
+        answer a = a==b
+        in answer
+
+section
+  pre
+    code.hs.
+      union :: Set -> Set -> Set
+      union a b = \c -> (contains b c) || (contains a c)
+
+      intersect :: Set -> Set -> Set
+      intersect a b = \c -> (contains b c) && (contains a c)
+
+      diff :: Set -> Set -> Set
+      diff a b = \c -> (contains a c) && (not (contains b c))
+
+      filter' :: Set -> (Int -> Bool) -> Set
+      filter' a f = \c -> (contains a c) && (f c)
+
+section
+  pre
+    code.hs.
+      forAll :: Set -> (Int -> Bool) -> Bool
+      forAll a f =
+        let
+          forAll' 1000 = True
+          forAll' acc =
+            if (contains a acc) && not (f acc)
+              then False
+              else forAll' (acc+1)
+        in forAll' (-1000)
+
+      exists :: Set -> (Int -> Bool) -> Bool
+      exists a f = not $ forAll a (not . f)
