@@ -1,86 +1,211 @@
 section
-	h4 $ .
-	pre
-		code.hs.
-			putStrLn (show (1 + 1))
-section
-	h4 $ .
-	pre
-		code.hs.
-			Prelude> :t ($)
-			($) :: (a -> b) -> a -> b
-		code.hs.fragment.
-			putStrLn (show $ 1 + 1)
-			putStrLn $ show (1 + 1)
-			putStrLn $ show $ 1 + 1
+  img(src="./img/5-0" alt="Карри")
 
 section
-	h4 $ .
-	pre
-		code.hs.fragment.
-			Prelude> :t (.)
-			(.) :: (b -> c) -> (a -> b) -> a -> c
-		code.hs.fragment.
-			(putStrLn . show) (1 + 1)
-			putStrLn . show $ 1 + 1
+  h4 Каррирование
+  pre
+    code.hs.
+      (+) 9 5
+      -- 14
+      sum x y = (+) x y
+      sum = (+)
+      -- :t (+)
+      (+) :: Num a => a -> a -> a
+    code.hs.fragment.
+      -- ДМ, вывод типов правоассоциативен
+      (+) :: Num a => a -> (a -> a)
+    code.hs.fragment.
+      > (+) (9 5)
+      ?
+    code.hs.fragment.
+      > ((+) 9) 5
+      ?
 
 section
-	pre
-		code.hs.
-			type Set = Int -> Bool
-			contains :: Set -> Int -> Bool
-			singletonSet :: Int -> Set
-			union :: Set -> Set -> Set
-			intersect :: Set -> Set -> Set
-			diff :: Set -> Set -> Set
-			filter' :: Set -> (Int -> Bool) -> Set
-			bounds = [-1000,1000]
-			forAll :: Set -> (Int -> Bool) -> Bool
-			exists :: Set -> (Int -> Bool) -> Bool
+  h4 Каррирование
+  pre
+    code.hs.
+      > let sumWith9 = (+) 9
+      > :t sumWith9
+      sumWith9 :: Integer -> Integer
+      > sumWith9 5
+      14
+      > sumWith9 90
+      99
+      > let res = sumWith9 42
+      51
+      > :t res
+      res :: Integer
 
 section
-	pre
-		code.hs.
-			type Set = Int -> Bool
-			a = (\a -> True)::Set
-
-			contains :: Set -> Int -> Bool
-			contains s a = s a
-
-			singletonSet :: Int -> Set
-			singletonSet = \b -> (\a -> a == b)
-			singletonSet b = \a -> a == b
-			singletonSet b = let
-				answer a = a==b
-				in answer
+  h4 ФВП
+  pre
+    code.hs.
+      > let doItAgain f x = f (f x)
+      > doItAgain sumWith9 3
+      21
+      zipWith' :: (a -> b -> c) -> [a] -> [b] -> [c]
+      ?
+      > zipWith (+) [1, 2, 3, 4] [4, 3, 2, 1]
+      [5, 5, 5, 5]
+      > zipWith (++) ["CSKA", "Zenith"] ["champion", "champion"]
 
 section
-	pre
-		code.hs.
-			union :: Set -> Set -> Set
-			union a b = \c -> (contains b c) || (contains a c)
-
-			intersect :: Set -> Set -> Set
-			intersect a b = \c -> (contains b c) && (contains a c)
-
-			diff :: Set -> Set -> Set
-			diff a b = \c -> (contains a c) && (not (contains b c))
-
-			filter' :: Set -> (Int -> Bool) -> Set
-			filter' a f = \c -> (contains a c) && (f c)
+  h4 ФВП
+  pre
+    code.hs.
+      flip' :: (a -> b -> c) -> b -> a -> c
+      flip' f y x = f x y
+      > flip' zip [1,2,3,4,5] "hello"
+      [('h',1),('e',2),('l',3),('l',4),('o',5)]
+      > zipWith (flip' div) [2,2..] [10,8,6,4,2]
+      [5,4,3,2,1]
 
 section
-	pre
-		code.hs.
-			forAll :: Set -> (Int -> Bool) -> Bool
-			forAll a f =
-				let
-					forAll' 1000 = True
-					forAll' acc =
-						if (contains a acc) && not (f acc)
-							then False
-							else forAll' (acc+1)
-				in forAll' (-1000)
+  h4 map
+  pre
+    code.hs.
+      map :: (a -> b) -> [a] -> [b]
+      map _ [] = []
+      map f (x:xs) = f x : map f xs
+      > map (+3) [1,5,3,1,6]
+      [4,8,6,4,9]
+      > map (++ "!") ["BIFF", "BANG", "POW"]
+      ["BIFF!","BANG!","POW!"]
+      > map (replicate 3) [3..6]
+      [[3,3,3],[4,4,4],[5,5,5],[6,6,6]]
+      > map (map (^2)) [[1,2],[3,4,5,6],[7,8]]
+      [[1,4],[9,16,25,36],[49,64]]
+      > map fst [(1,2),(3,5),(6,3),(2,6),(2,5)]
+      [1,3,6,2,2]
 
-			exists :: Set -> (Int -> Bool) -> Bool
-			exists a f = not $ forAll a (not . f)
+section
+  h4 filter
+  pre
+    code.hs.
+      filter :: (a -> Bool) -> [a] -> [a]
+      filter _ [] = []
+      filter p (x:xs)
+      | p x
+       = x : filter p xs
+      | otherwise = filter p xs
+      > filter (>3) [1,5,3,2,1,6,4,3,2,1]
+      [5,6,4]
+      > filter (==3) [1,2,3,4,5]
+      [3]
+
+section
+  h4 filter
+  pre
+    code.hs.
+      > filter even [1..10]
+      [2,4,6,8,10]
+      > let notNull x = not (null x) in filter notNull [[1,2,3],[],
+      [3,4,5],[2,2],[],[],[]]
+      [[1,2,3],[3,4,5],[2,2]]
+      > filter (`elem` ['a'..'z']) "u LaUgH aT mE BeCaUsE I aM
+      diFfeRent"
+      "uagameasadifeent"
+      > filter (`elem` ['A'..'Z']) "i lauGh At You BecAuse u r aLL the
+      Same"
+      "GAYBALLS"
+
+section
+  h4 λ-выражения
+  pre
+    code.hs.
+      square x = x * x
+      oddsSquares = filter (\x -> odd x) (map square [1..100])
+      oddsSquares = filter (\x -> odd x) (map (\x->x*x) [1..100])
+      square = \x → x * x
+      flip' :: (a -> b -> c) -> b -> a -> c
+      flip' f = \x y -> f y x
+
+
+
+section
+  h4 $ .
+  pre
+    code.hs.
+      putStrLn (show (1 + 1))
+section
+  h4 $ .
+  pre
+    code.hs.
+      Prelude> :t ($)
+      ($) :: (a -> b) -> a -> b
+    code.hs.fragment.
+      putStrLn (show $ 1 + 1)
+      putStrLn $ show (1 + 1)
+      putStrLn $ show $ 1 + 1
+
+section
+  h4 $ .
+  pre
+    code.hs.fragment.
+      Prelude> :t (.)
+      (.) :: (b -> c) -> (a -> b) -> a -> c
+    code.hs.fragment.
+      (putStrLn . show) (1 + 1)
+      putStrLn . show $ 1 + 1
+
+section
+  pre
+    code.hs.
+      type Set = Int -> Bool
+      contains :: Set -> Int -> Bool
+      singletonSet :: Int -> Set
+      union :: Set -> Set -> Set
+      intersect :: Set -> Set -> Set
+      diff :: Set -> Set -> Set
+      filter' :: Set -> (Int -> Bool) -> Set
+      bounds = [-1000,1000]
+      forAll :: Set -> (Int -> Bool) -> Bool
+      exists :: Set -> (Int -> Bool) -> Bool
+
+section
+  pre
+    code.hs.
+      type Set = Int -> Bool
+      a = (\a -> True)::Set
+
+      contains :: Set -> Int -> Bool
+      contains s a = s a
+
+      singletonSet :: Int -> Set
+      singletonSet = \b -> (\a -> a == b)
+      singletonSet b = \a -> a == b
+      singletonSet b = let
+        answer a = a==b
+        in answer
+
+section
+  pre
+    code.hs.
+      union :: Set -> Set -> Set
+      union a b = \c -> (contains b c) || (contains a c)
+
+      intersect :: Set -> Set -> Set
+      intersect a b = \c -> (contains b c) && (contains a c)
+
+      diff :: Set -> Set -> Set
+      diff a b = \c -> (contains a c) && (not (contains b c))
+
+      filter' :: Set -> (Int -> Bool) -> Set
+      filter' a f = \c -> (contains a c) && (f c)
+
+section
+  pre
+    code.hs.
+      forAll :: Set -> (Int -> Bool) -> Bool
+      forAll a f =
+        let
+          forAll' 1000 = True
+          forAll' acc =
+            if (contains a acc) && not (f acc)
+              then False
+              else forAll' (acc+1)
+        in forAll' (-1000)
+
+      exists :: Set -> (Int -> Bool) -> Bool
+      exists a f = not $ forAll a (not . f)
