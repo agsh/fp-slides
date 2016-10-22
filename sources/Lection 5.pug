@@ -1,5 +1,5 @@
 section
-  img(src="./img/5-0" alt="Карри")
+  img(src="./img/5-0.png" alt="Карри")
 
 section
   h4 Каррирование
@@ -86,9 +86,8 @@ section
       filter :: (a -> Bool) -> [a] -> [a]
       filter _ [] = []
       filter p (x:xs)
-      | p x
-       = x : filter p xs
-      | otherwise = filter p xs
+        | p x = x : filter p xs
+        | otherwise = filter p xs
       > filter (>3) [1,5,3,2,1,6,4,3,2,1]
       [5,6,4]
       > filter (==3) [1,2,3,4,5]
@@ -101,13 +100,13 @@ section
       > filter even [1..10]
       [2,4,6,8,10]
       > let notNull x = not (null x) in filter notNull [[1,2,3],[],
-      [3,4,5],[2,2],[],[],[]]
+        [3,4,5],[2,2],[],[],[]]
       [[1,2,3],[3,4,5],[2,2]]
       > filter (`elem` ['a'..'z']) "u LaUgH aT mE BeCaUsE I aM
-      diFfeRent"
+        diFfeRent"
       "uagameasadifeent"
       > filter (`elem` ['A'..'Z']) "i lauGh At You BecAuse u r aLL the
-      Same"
+        Same"
       "GAYBALLS"
 
 section
@@ -125,52 +124,46 @@ section
   h4 Показать список
   pre
     code.hs.
-      map (\(x,y) -> show x ++ "). " ++ y) $ zip [1..]
-        ["Трус", "Балбес", "Бывалый"]
+      map (\(x,y) -> show x ++ "). " ++ y) (zip [1..]
+        ["Трус", "Балбес", "Бывалый"])
 
 section
   pre
     code.hs.
       calcDistance (x,y) (a,b) = sqrt (w^2 + h^2)
-      where (w,h) = (x-a, b-y)
+        where (w,h) = (x-a, b-y)
       points = [(1,1),(5,3),(2,5),(7,4),(5,5),(3,2),(0,4)]
+
       sort [] = []
       sort ((x,o):xs) =
-      let smallerSorted = sort (filter (\(y,o) -> y <= x) xs)
-      biggerSorted = sort (filter (\(y,o) -> y > x) xs)
-      in smallerSorted ++ [(x,o)] ++ biggerSorted
-      nearest3 dest = take 3 (sort (map (\p -> (calcDistance p dest, p)) points))
+        let
+          smallerSorted = sort (filter (\(y,o) -> y <= x) xs)
+          biggerSorted = sort (filter (\(y,o) -> y > x) xs)
+        in smallerSorted ++ [(x,o)] ++ biggerSorted
 
 section
   pre
     code.hs.
-      > nearest3 (2,2)
-      nearest3 dest = take 3
-       (filter (\(dist, p) -> dist < 2) (sort (map
-      (\p -> (calcDistance p
-       dest, p)) points)))
-      nearest3 dest = filter
-       (\(dist, p) -> dist < 2) (take 3 (sort (map
-      (\p -> (calcDistance p
-       dest, p)) points)))
+      nearest3 dest =
+        take 3 (sort (map (\p -> (calcDistance p dest, p)) points))
       > nearest3 (2,2)
 
 section
   pre
     code.js.
       var metroStations = [{lat: 52.234, lng: 30.482, name:
-      'Kashirskaya'},..]
-      , calcDistance = function(point, station) {
-      station.dist = 180 * arctan ... // distance algorythm (mutable)
-      return station;
-      };
-      nearest3 = function(point) {
-      return metroStations
-      .map(function(m) {return calcDistance(point, m);})
-      .sort(function(a,b) {return a.dist > b .dist;})
-      .slice(0,3)
-      .filter(function(m) {return m.dist < 2000;})
-      };
+        'Kashirskaya'},..]
+        , calcDistance = (point, station) => {
+          station.dist = 180 * arctan ... // distance algorythm (mutable)
+          return station;
+        };
+
+      nearest3 = point => metroStations
+        .map(function(m) {return calcDistance(point, m);})
+        .sort(function(a,b) {return a.dist > b .dist;})
+        .slice(0,3)
+        .filter(function(m) {return m.dist < 2000;})
+
       nearest3({lattitude: 52.0, longitude: 31.0})
 
 section
@@ -194,7 +187,7 @@ section
 section
   h4 $ .
   pre
-    code.hs.fragment.
+    code.hs.
       > :t (.)
       (.) :: (b -> c) -> (a -> b) -> a -> c
       f . g = \x -> f (g x)
@@ -207,11 +200,15 @@ section
   h4 Применение функций
   pre
     code.hs.
-      nearest3 dest = filter (\(dist, p) -> dist < 2) $ take 3 $ sort $ map (\p -> (calcDistance p dest,
-      p)) points
-      No more LISP!
-      nearest3 dest = filter (\(dist, p) -> dist < 2) (take 3 (sort (map (\p -> (calcDistance p dest, p))
-      points)))
+      nearest3 dest =
+        filter (\(dist, p) -> dist < 2)
+        $ take 3
+        $ sort
+        $ map (\p -> (calcDistance p dest, p)) points
+      -- No more LISP!
+      nearest3 dest =
+        filter (\(dist, p) -> dist < 2)
+          (take 3 (sort (map (\p -> (calcDistance p dest, p)) points)))
       > sum 9 (sum 6 (sum 3 1))
       > sum 9 $ sum 6 $ sum 3 1
 
@@ -228,8 +225,8 @@ section
   h4 Композиция функций
   pre
     code.hs.
-      nearest3 dest = take 3 . sort . map (\p -> (calcDistance p
-      dest, p))
+      nearest3 dest = take 3 . sort . map (\p ->
+        (calcDistance p dest, p))
       main = do
       putStr . show $ nearest3 (2,2) points
       {-
@@ -275,7 +272,3 @@ section
     одинаковых шаров, из которых можно построить
     пирамиду с треугольным основанием, на каждой
     стороне которой укладывается n шаров
-
-
-
-
