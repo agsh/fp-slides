@@ -1,0 +1,210 @@
+section
+  h4 Типы
+  img(src='./img/7-0.jpg')
+
+section
+  h4 Типы
+  img(src='./img/7-2.jpg')
+
+section
+  h4 Типы
+  img(src='./img/7-1.png')
+
+section
+  pre
+    code.hs.
+      data Anniversary =
+        Birthday String Int Int Int
+        | Wedding String String Int Int Int
+        | Death String Int Int Int
+
+      > Birthday "someone" 2012 11 7
+      Birthday "someone" 2012 11 7
+      > let today = Birthday "someone" 2012 11 7
+      > today
+      Birthday "someone" 2012 11 7
+      > :t today
+      today :: Anniversary
+
+section
+  h4 Типы
+  pre
+    code.hs.
+      > :t Birthday
+      Birthday :: String -> Int -> Int -> Int -> Anniversary
+
+      > :t Death
+      Birthday :: String -> Int -> Int -> Int -> Anniversary
+
+section
+  h4 Типы
+  pre
+    code.hs.
+      kurtCobain :: Anniversary
+      kurtCobain = Birthday "Kurt Cobain" 1967 2 20
+
+      kurtWedding :: Anniversary
+      kurtWedding = Wedding "Kurt Cobain" "Courtney Love" 1990 1 12
+
+section
+  h4 Типы
+  pre
+    code.hs.
+      anniversaries = [
+        kurtCobain,
+        kurtWedding,
+        Death "Kurt Cobain" 1994 4 5
+      ]
+
+section
+  h4 Типы
+  pre
+    code.hs.
+      type AnniversaryBook = [Anniversary]
+
+      showDate :: Int -> Int -> Int -> String
+      showDate y m d = show y ++ "." ++ show m ++ "." ++ show d
+
+section
+  h4 Типы
+  pre
+    code.hs.
+      showAnniversary :: Anniversary -> String
+
+      showAnniversary (Birthday name year month day) =
+        name ++ " born " ++ showDate year month day
+
+      showAnniversary (Wedding name1 name2 year month day) =
+        name1 ++ " married " ++ name2 ++ " on " ++ showDate
+      year month day
+
+      showAnniversary (Death name year month day) =
+        name ++ " dead in " ++ showDate year month day
+
+section
+  h4 Типы
+  pre
+    code.hs.
+      who :: Anniversary -> String
+      who (Birthday him _ _ _) = him
+      who (Wedding him _ _ _ _) = him
+      who (Death him _ _ _) = him
+
+      map who anniversaries
+
+section
+  h4 Типы
+  pre
+    code.hs.
+      showAnniversaries :: AnniversaryBook -> [String]
+      showAnniversaries = map showAnniversary
+
+      ["Kurt Cobain born 1967-2-20",
+        "Kurt Cobain married Courtney Love on 1990-1-12",
+        "Kurt Cobain dead 1994-4-5"]
+
+      1) Kurt Cobain born 1967-2-20
+      2) Kurt Cobain married Courtney Love on 1990-1-12
+      3) Kurt Cobain dead 1994-4-5
+
+      ?
+
+section
+  h4 Неявное наследлвание
+  pre
+    code.hs.
+      > anniversaries
+          No instance for (Show Anniversary)
+            arising from a use of `print'
+          Possible fix: add an instance declaration for (Show Anniversary)
+          In a stmt of an interactive GHCi command: print it
+
+      data Anniversary =
+        Birthday String Int Int Int
+        | Wedding String String Int Int Int
+        | Death String Int Int Int
+        deriving (Show)
+
+section
+  h4 Именованные типы
+  pre
+    code.hs.
+      data Point = Pt {pointx, pointy :: Float}
+
+      > let myPoint = Pt {pointx = 42.0, pointy = 13.666} -- json
+
+      pointx :: Point -> Float
+      pointy :: Point -> Float
+
+      absPoint :: Point -> Float
+      absPoint p = sqrt (pointx p * pointx p + pointy p * pointy p)
+
+      absPoint (Pt {pointx = x, pointy = y}) = sqrt (x*x + y*y)
+
+section
+  h4 Параметры типов
+  pre
+    code.hs.
+      data Maybe a = Nothing | Just a -- generics
+      > Just "str"
+      Just "str"
+      > :t Just "str"
+      Just "str" :: Maybe [Char]
+      > Just 42
+      Just 42
+      > :t Just 42
+      Just 42 :: (Num t) => Maybe t
+      > :t Nothing
+      Nothing :: Maybe a
+      > Just 42 :: Maybe Double
+      Just 42.0
+      > Just 42 : [Nothing] ?
+      > Just 42 : [Just "str", Nothing] ?
+
+section
+  h4 Рекурсивные структуры
+  pre
+    code.hs.
+      data List a = Nil | Cons a (List a) deriving (Show, Read, Eq, Ord)
+
+      > 3 `Cons` (4 `Cons` (5 `Cons` Nil))
+      Cons 3 (Cons 4 (Cons 5 Nil))
+
+section
+  h4 Рекурсивные структуры
+  pre
+    code.hs.
+      infixr 5 :-:
+      data List a = Nil | a :-: (List a) deriving (Show, Read, Eq, Ord)
+
+      > let a = 3 :-: 4 :-: 5 :-: Nil
+      > 100 :-: a
+      (:-:) 100 ((:-:) 3 ((:-:) 4 ((:-:) 5 Nil)))
+
+section
+  h4 Рекурсивные структуры
+  pre
+    code.hs.
+      infixr 5  .++
+      (.++) :: List a -> List a -> List a
+      Nil .++ ys = ys
+      (x :-: xs) .++ ys = x :-: (xs .++ ys)
+
+      > let a = 3 :-: 4 :-: 5 :-: Nil
+      > let b = 6 :-: 7 :-: Nil
+      > a .++ b
+      (:-:) 3 ((:-:) 4 ((:-:) 5 ((:-:) 6 ((:-:) 7 Nil))))
+
+section
+  h4 Деревья
+  img(src='./img/7-3.jpg')
+
+section
+  h4 Деревья
+  pre
+    code.hs.
+      data Tree a =
+          EmptyTree
+          | Node a (Tree a) (Tree a)
+          deriving (Show, Read, Eq)
+
