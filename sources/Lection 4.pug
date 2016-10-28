@@ -248,16 +248,21 @@ section
 
 section
   p.
-    Write a recursive function which verifies the balancing of parentheses in a string, which we represent as a List[Char] not a String. For example, the function should return true for the following strings:
+    Write a recursive function which verifies the balancing of parentheses in a string, which we represent as a [Char] as you remember. For example, the function should return True for the following strings:
+  pre
+    code.
+      (if (zero? x) max (/ 1 x))
+      I told him (that it’s not (yet) done). (But he wasn’t listening)
+  p The function should return False for the following strings:
+  pre
+    code.
+      :-)
+      ())(
   p.
-    (if (zero? x) max (/ 1 x))
-    I told him (that it’s not (yet) done). (But he wasn’t listening)
-    The function should return false for the following strings:
-  p.
-    :-)
-    ())(
     The last example shows that it’s not enough to verify that a string contains the same number of opening and closing parentheses.
-    balance :: String → Bool
+  pre
+    code.
+      balance :: String → Bool
 
 section
   pre
