@@ -33,13 +33,13 @@ section
     code.hs.
       union :: Set -> Set -> Set
       union a b = \c -> (contains b c) || (contains a c)
-
+    code.hs.fragment.
       intersect :: Set -> Set -> Set
       intersect a b = \c -> (contains b c) && (contains a c)
-
+    code.hs.fragment.
       diff :: Set -> Set -> Set
       diff a b = \c -> (contains a c) && (not (contains b c))
-
+    code.hs.fragment.
       filter' :: Set -> (Int -> Bool) -> Set
       filter' a f = \c -> (contains a c) && (f c)
 
@@ -55,6 +55,137 @@ section
               then False
               else forAll' (acc+1)
         in forAll' (-1000)
-
+    code.hs.fragment.
       exists :: Set -> (Int -> Bool) -> Bool
       exists a f = not $ forAll a (not . f)
+
+section
+  h4 Ещё немного о fib
+  pre
+    code.hs.
+      fib1 0 = 1
+      fib1 1 = 1
+      fib1 n = fib1 (n-1) + fib1 (n-2)
+      fi1 = map fib1 [1..]
+  p Безумно медленно
+
+section
+  img(src='./img/6-0.gif')
+
+section
+  h4 Ещё немного о fib
+  pre
+    code.hs.
+      fib2' (a, b) 0 = a
+      fib2' (a, b) n = fib2' (b, a+b) (n-1)
+      fib2 = fib2' (1, 1)
+      fi2 = map fib2 [1..]
+  p Непонятно
+
+section
+  h4 Мемоизация
+  pre
+    code.hs.
+      fi4 =
+        let
+          fib 1 = 1
+          fib 2 = 1
+          fib n = fib4' (n-2) + fib4' (n-1)
+          fib4' n = fi4 !! (n-1)
+        in map fib [1..]
+  p Profit! (см. Data.Map, Data.Set)
+
+section
+  h4 Задание
+  p.
+    Функция permute, генерация списка всех перестановок списка
+  pre
+    code.hs permute [1,2,3] = [[1,2,3],[1,3,2],…,[3,2,1]]
+
+section
+  h4 Задание
+  pre
+    code.hs.
+      concat [[1,2],[3,4,5],[6]] = [1,2,3,4,5,6]
+      concat = foldr (++) [] - конкатенация списка списков
+      foldr – функция свёртки, следующая лекция
+
+section
+  h4 Задание
+  img(src='./img/6-1.png')
+
+
+section
+  pre
+    code.hs.
+      permute' [] = [[]]
+      permute' list = let
+        listOfListsWith a = map (\e -> a : e) (permute'
+          (filter (\x -> x /= a) list))
+        in concat $ map listOfListsWith list
+
+section
+  pre
+    code.hs.
+      permute' [1,2,3]
+      [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
+  p Клёви!
+  pre
+    code.hs.
+      permute' [1,2,1]
+      [[1,2],[2,1],[2,1],[1,2]]
+  p Печалька
+
+section
+  pre
+    code.hs.
+      permute list =
+        let
+          xs = permute' [0 .. length list - 1]
+          deepMap = map . map
+        in deepMap (\x -> list !! x) xs
+
+section
+  pre
+    code.hs.
+      import Data.List
+  pre
+    code.
+      :m Data.List
+  pre
+    code.hs.
+      permute [] = [[]]
+      permute list =
+        let
+          listOfListsWith a = map (\e -> a : e)
+            (permute' $ delete a list)
+        in concat $ map listOfListsWith list
+
+section
+  pre
+    code.hs.
+      permute :: Eq a => [a] -> [[a]]
+      permute [] = [[]]
+      permute xs = [y | x <- xs, y <- map (x:) $ permute $ delete x xs]
+
+section
+  h4 Размен монет
+  p.
+    Write a recursive function that counts how many different ways you can make change for an amount, given a list of coin denominations. For example, there are 3 ways to give change for 4 if you have coins with denomiation 1 and 2: 1+1+1+1, 1+1+2, 2+2.
+
+    Do this exercise by implementing the countChange function in Haskell, yopt! This function takes an amount to change, and a list of unique denominations for the coins. Its signature is as follows:
+    CountChange Int -> [Int] -> Int
+    Once again, you can make use pattern matching and other things which you know in Haskell.
+
+section
+  pre
+    code.hs.
+      countChange 0 _ = 0
+      countChange _ [] = 0
+      countChange money (coin : coins)
+        | coin > money = countChange money coins
+        | coin < money = countChange (money-coin)
+          (coin:coins) + countChange money coins
+        | coin == money = 1
+
+
