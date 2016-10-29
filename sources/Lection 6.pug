@@ -186,6 +186,6 @@ section
         | coin > money = countChange money coins
         | coin < money = countChange (money-coin)
           (coin:coins) + countChange money coins
-        | coin == money = 1
+        | coin == money = 1 + countChange money coins
 
 
