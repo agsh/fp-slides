@@ -208,3 +208,51 @@ section
           | Node a (Tree a) (Tree a)
           deriving (Show, Read, Eq)
 
+section
+  h4 Деревья
+  pre
+    code.hs.
+      singleton :: a -> Tree a
+      singleton x = Node x EmptyTree EmptyTree
+
+      treeInsert :: (Ord a) => a -> Tree a -> Tree a
+      treeInsert x EmptyTree = singleton x
+      treeInsert x (Node a left right)
+          | x == a = Node x left right
+          | x < a  = Node a (treeInsert x left) right
+          | x > a  = Node a left (treeInsert x right)
+
+section
+  h4 Деревья
+  pre
+    code.hs.
+      list2tree :: (Ord a) => [a] -> Tree a
+      list2tree = l2t EmptyTree
+        where
+          l2t acc [] = acc
+          l2t acc (head:tail) = l2t (treeInsert head acc) tail
+
+      list2tree [12, 1, 6, 4, 90, 9]
+
+section
+  h4 tree2list
+  pre
+    code.hs.
+      tree2list :: (Ord a) => Tree a -> [a]
+      tree2list EmptyTree = ?
+      tree2list (Node val left right) = ?
+
+section
+  h4 tree2list
+  pre
+    code.hs.
+      tree2list :: (Ord a) => Tree a -> [a]
+      tree2list EmptyTree = []
+      tree2list (Node val left right) =
+          (tree2list left) ++ (val : tree2list right)
+
+
+      treeSort :: (Ord a) => [a] -> [a]
+      treeSort = tree2list . list2tree
+
+      > treeSort [12, 1, 6, 4, 90, 9]
