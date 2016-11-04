@@ -256,3 +256,113 @@ section
       treeSort = tree2list . list2tree
 
       > treeSort [12, 1, 6, 4, 90, 9]
+
+section
+  h4 tree2list
+  pre
+    code.hs.
+      tree2list :: (Ord a) => Tree a -> [a]
+      tree2list EmptyTree = []
+      tree2list (Node val left right) = ?
+
+
+      treeSortDesc :: (Ord a) => [a] -> [a]
+      treeSortDesc = tree2list . list2tree
+
+      > treeSort [12, 1, 6, 4, 90, 9]
+
+section
+  h4 Рекурсивные структуры
+  pre
+    code.hs.
+      Кол-во вершин дерева (== кол-во чисел в нём)
+
+      treeNum :: Tree a -> Int  ?
+
+section
+  h4 Рекурсивные структуры
+  pre
+    code.hs.
+      treeNum :: Tree a -> Int
+      treeNum EmptyTree = 0
+      treeNum (Node val left right) = 1 + (treeNum left) + (treeNum right)
+
+section
+  h4 Википедия (c)
+  p(style='font-size:20pt').
+    Дерево можно кодировать наборами из нулей и единиц.
+    Рассмотрим, например, укладку дерева на плоскости.
+    Начиная с какой либо вершины, будем двигаться по ребрам дерева, сворачивая в каждой вершине
+    на ближайшее справа ребро и поворачивая назад в концевых вершинах дерева.
+    Проходя по некоторому ребру, записываем 0 при движении по ребру в первый раз и 1
+    при движении по ребру второй раз (в обратном направлении). Если m — число рёбер дерева,
+    то через 2m шагов мы вернемся в исходную вершину, пройдя по каждому ребру дважды.
+    Полученная при этом последовательность из 0 и 1 (код дерева) длины 2m позволяет однозначно
+    восстанавливать не только само дерево D, но и его укладку на плоскости.
+
+section
+  pre
+    code.hs.
+      treeCode :: Tree a -> [Int]
+      treeCode EmptyTree = []
+      treeCode (Node val left right) =
+          ([0] ++ treeCode left ++ [1]) ++ ([0] ++ treeCode right ++ [1])
+
+      >treeCode $ list2tree [8,6,4,1,7,3,5]
+      [0,0,0,0,1,0,0,1,0,1,1,1,0,0,1,0,1,1,1,0,0,1,0,1,1,1,0,1]
+
+section
+  img(src='./img/7-4.png')
+  p [0,0,0,0,1,0,0,1,0,1,1,1,0,0,1,0,1,1,1,0,0,1,0,1,1,1,0,1]
+
+section
+  img(src='./img/7-5.png')
+  p [0,0,0,0,1,0,0,1,0,1,1,1,0,0,1,0,1,1,1,0,0,1,0,1,1,1,0,1]
+
+section
+  pre
+    code.hs.
+      list2tree [12, 12, 12, 13, 13, 14]
+
+      -- Как будет выглядеть дерево?
+
+section
+  pre
+    code.hs.
+      data Tree = ?
+
+      singleton :: a -> Tree a
+      singleton x = ?
+
+      treeInsert :: (Ord a) => a -> Tree a -> Tree a
+      treeInsert x EmptyTree = singleton x
+      ?
+
+      list2tree :: (Ord a) => [a] -> Tree a
+      list2tree = ?
+
+section
+  pre
+    code.hs.
+      data Tree a =
+        EmptyTree
+        | Node a Int (Tree a) (Tree a) deriving (Show, Read, Eq)
+
+      singleton :: a -> Tree a
+      singleton x = Node x 1 EmptyTree EmptyTree
+
+section
+  pre
+    code.hs.
+      treeInsert :: (Ord a) => a -> Tree a -> Tree a
+      treeInsert x EmptyTree = singleton x
+      treeInsert x (Node a i left right)
+          | x == a = Node x (i+1) left right
+          | x < a  = Node a i (treeInsert x left) right
+          | x > a  = Node a i left (treeInsert x right)
+
+      list2tree :: (Ord a) => [a] -> Tree a
+      list2tree = l2t EmptyTree
+        where
+          l2t acc [] = acc
+          l2t acc (head:tail) = l2t (treeInsert head acc) tail
