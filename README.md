@@ -1,8 +1,5 @@
-# Dates
-- [x] 01.11 10:00
-- [ ] 08.11 10:00
-
 # Build
+Install http://nodejs.org
 ```
 git clone https://github.com/agsh/fp-slides.git
 cd fp-slides
