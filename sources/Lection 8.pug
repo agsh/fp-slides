@@ -199,7 +199,7 @@ section
 
 section
   h4 Свёртки
-  p Возьмём список из 1 элемента: (u # x1) = (x1 # u)
+  p Список из 1 элемента: (u # x1) = (x1 # u)
   p ∀x: u # x = x # u (1)
   ul
     li # принимает аргументы одного типа
@@ -208,3 +208,40 @@ section
     u - не обязательно единица для #, но часто
     u = 0, 1, [], False, True...
 
+section
+  h4 Свёртки
+  p Список из 3 элементов: ((u#a)#b)#c = a#(b#(c#u))
+  p ∀a,b,c: (a#b)#c = a#(b#c) (2)
+  p # - ассоциативная операция
+  p (1) + (2) – результаты свёрток совпадают
+
+section
+  h4 Свёртки
+  pre
+    code.hs.
+      foldl1, foldr1  :: (a -> a -> a) -> [a] -> a
+
+      foldl1 f (x:xs)  =  foldl f x xs
+
+      foldr1 f [x]     =  x
+      foldr1 f (x:xs)  =  f x (foldr1 f xs)   -- ?
+
+      sum list = foldl1 (+) list
+      sum list = foldr1 (+) list
+
+section
+  h4 Свёртки
+  pre
+    code.hs.
+      :set +s -- измерение времени
+
+      foldl1 (+) [1..10000000]
+      foldr1 (+) [1..10000000]
+
+      const :: a → b → a
+
+      foldl1 (const) [1..10000000]  ?
+      foldr1 (const) [1..10000000]  ?
+
+section
+  h4 Свёртки
