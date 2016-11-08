@@ -1,0 +1,210 @@
+section
+  h4 Свёртки
+  img(src='./img/8-0.jpg')
+
+section
+  h4 Свёртки
+  pre
+    code.hs.
+      sum [] = 0
+      sum (x:xs) = x + sum xs
+
+      minList [] = 0
+      minList (x:xs) = min x (minList xs)
+
+      concat [] = []
+      concat (xs:xss) = xs ++ (concat xss)
+
+section
+  h4 Свёртки
+  pre
+    code.hs.
+      map f [] = []
+      map f (x:xs) = f x : (map f xs)
+
+      filter f [] = []
+      filter f (x:xs) =
+        if (f x)
+        then x : (filter f xs)
+        else filter f xs
+
+section
+  h4 Свёртки
+  pre
+    code.hs.
+      any f [] = False
+      any f (x:xs) = if (f x) then True else any f xs
+
+      all f [] = True
+      all f (x:xs) = if (f x) then all f xs else False
+
+
+      any f (x:xs) = f x || any f xs
+      all f (x:xs) = f x && all f xs
+
+section
+  h4 Правые свёртки
+  pre
+    code x1 # (x2 # (x3 # (... # u)))
+  table
+    tr
+      th
+      th #
+      th u
+    tr
+      td sum
+      td +
+      td 0
+    tr
+      td maxList
+      td max
+      td 0 (-∞)
+    tr
+      td concat
+      td ++
+      td []
+    tr
+      td map
+      td :
+      td []
+    tr
+      td filter
+      td `(\x r -> if (f x) then x:r else r)`
+      td []
+    tr
+      td any
+      td `(\x r -> f x || r)`
+      td False
+    tr
+      td all
+      td `(\x r -> f x && r)`
+      td True
+
+section
+  pre
+    code.hs.
+      -- # -> hash -> h
+      foldr h u [] = u
+      foldr h u (x:xs) = h x (foldr h u xs)
+
+      sum list = foldr (+) 0 list
+
+      filter f list =
+        foldr (\x r -> if (f x) then x:r else r) [] list
+
+      -- concat, any, all - самостоятельно
+
+section
+  h4 Функции с аккумулятором
+  pre
+    code.hs.
+      sum list = sum' list 0
+        where
+        sum' [] acc = acc
+        sum' (x:xs) acc = sum' xs (acc+x)
+
+      minList list = minList' list 0
+        where
+        minList' [] acc = acc
+        minList' (x:xs) acc = minList' xs (min acc x)
+
+section
+  h4 Функции с аккумулятором
+  pre
+    code.hs.
+      concat list = concat' list []
+        where
+        concat' [] acc = acc
+        concat' (x:xs) acc = concat' xs (acc ++ x)
+
+      reverse list = reverse' list []
+        where
+        reverse' [] acc = acc
+        reverse' (x:xs) acc = reverse' xs (x:acc)
+
+section
+  h4 Левые свёртки
+  pre
+    code (((u # x1) # x2) # .. ) # xn
+  table
+    tr
+      th
+      th #
+      th u
+    tr
+      td sum
+      td +
+      td 0
+    tr
+      td maxList
+      td max
+      td 0 (-∞)
+    tr
+      td concat
+      td ++
+      td []
+    tr
+      td reverse
+      td :
+      td []
+    tr
+      td any
+      td `(\r x -> r || f x)`
+      td False
+    tr
+      td all
+      td `(\r x -> r && f x)`
+      td True
+
+section
+  h4 Левые свёртки
+  pre
+    code.hs.
+      foldl h u []     =  u
+      foldl h u (x:xs) =  foldl h (h u x) xs
+
+      foldl h u list = foldl' u list
+        where
+        foldl' u [] = u
+        foldl' u (x:xs) = foldl' (h u x) xs
+
+      sum list = foldl (+) 0 list
+
+      reverse list = foldl (flip (:)) [] list
+
+      concat list = foldl (++) [] list
+
+section
+  h4 Свёртки
+  pre
+    code.hs.
+      foldl (+) 0 [1..10] == 55
+      foldr (+) 0 [1..10] == 55
+
+  p В чём подвох?
+  p Какие типы у foldl и foldr?
+
+  pre.fragment
+    code.hs.
+      foldl (-) 0 [1..10] == -55
+      foldr (-) 0 [1..10] == -5
+
+section
+  h4 Свёртки
+  pre
+    code.hs.
+      (((u # x1) # x2) # .. ) # xn
+      x1 # (x2 # (x3 # (... # u)))
+  p Когда результаты левой и правой свертки совпадают?
+
+section
+  h4 Свёртки
+  p Возьмём список из 1 элемента: (u # x1) = (x1 # u)
+  p ∀x: u # x = x # u (1)
+  ul
+    li # принимает аргументы одного типа
+    li u коммутирует с каждым элементом этого типа
+  p.
+    u - не обязательно единица для #, но часто
+    u = 0, 1, [], False, True...
+
