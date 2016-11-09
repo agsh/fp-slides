@@ -244,4 +244,101 @@ section
       foldr1 (const) [1..10000000]  ?
 
 section
-  h4 Свёртки
+  h4 Префиксные суммы
+  pre
+    code.hs.
+      scanr :: (a -> b -> b) -> b -> [a] -> [b]
+
+      scanl :: (a -> b -> a) -> a -> [b] -> [a]
+
+      -- вычсления последовательности промежуточных результатов свертки
+
+section
+  h4 Префиксные суммы
+  pre
+    code.hs.
+      > scanl (+) 0 [1..10]
+      [0,1,3,6,10,15,21,28,36,45,55]
+
+      > scanr (+) 0 [1..10]
+      [55,54,52,49,45,40,34,27,19,10,0]
+
+      > scanl (-) 0 [1..10]
+      [0,-1,-3,-6,-10,-15,-21,-28,-36,-45,-55]
+
+      > scanr (-) 0 [1..10]
+      [-5,6,-4,7,-3,8,-2,9,-1,10,0]
+
+      -- попробуйте сами написать scanr и scanl
+
+section
+  h4 Префиксные суммы
+  pre
+    code.hs.
+      scanr h u []     = [u]
+      scanr h u (x:xs) = h x (head rest) : rest
+        where rest = scanr h u xs
+
+      scanl h u xs =
+        u : (case xs of
+          [] -> []
+          (x:xs) -> scanl h (h u x) xs)
+
+section
+  h4 Функции над дерефьями
+  ul
+    li сумма элементов дерева
+    li кол-во элементов дерева
+    li из дерева в список
+
+section
+  h4 Функции над дерефьями
+  pre
+    code.hs.
+      sumTree :: (Num a) => Tree a -> a
+      sumTree EmptyTree = 0
+      sumTree (Node a l r) = a + (sumTree l) + (sumTree r)
+
+      countTree :: Tree a -> Int
+      countTree EmptyTree = 0
+      countTree (Node a l r) = 1 + (countTree l) + (countTree r)
+
+      tree2list = см.пред.л.
+
+section
+  h4 Свёртки над деревьями
+  pre
+    code.hs.
+      foldTree onEmpty _ EmptyTree = onEmpty
+      foldTree onEmpty onNode (Node a l r) =
+        onNode a (foldTree onEmpty onNode l)
+          (foldTree onEmpty onNode r)
+
+section
+  h4 Свёртки над деревьями
+  pre
+    code.hs.
+      sumTree tree = foldTree 0 (\a l r -> a + l + r) tree
+
+      countTree = foldTree 0 (\a l r -> 1 + l + r)
+
+      tree2list = ?
+    code.hs.fragment.
+      tree2list = foldTree [] (\a l r -> l ++ [a] ++ r)
+
+section
+  h4 Синтетический пример
+  pre
+    code.hs.
+      data Doc = Text String
+        | Picture [Bool]
+        | Composite [Doc]
+        deriving (Show)
+
+section
+  h4 Синтетический пример
+  pre
+    code.hs.
+      Text s - создает text-doc из строки
+      Picture img - создает picture-doc из массива бит
+      Composite docs - создает composite-doc из списка частей
