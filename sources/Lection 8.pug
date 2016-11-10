@@ -334,11 +334,86 @@ section
         | Picture [Bool]
         | Composite [Doc]
         deriving (Show)
+  table
+    tr
+      td
+        img(src='./img/8-1.png')
+      td
+        img(src='./img/8-2.png')
+      td
+        img(src='./img/8-3.png')
 
 section
   h4 Синтетический пример
   pre
     code.hs.
-      Text s - создает text-doc из строки
-      Picture img - создает picture-doc из массива бит
-      Composite docs - создает composite-doc из списка частей
+      Text s -- создает text-doc из строки
+      Picture img -- создает picture-doc из массива бит
+      Composite docs -- создает composite-doc из списка частей
+
+section
+  h4 Синтетический пример
+  pre
+    code.hs.
+      isText (Text _) = True
+      isText _ = False -- проверяет, является ли документ text-doc
+      isPicture (Picture _) = True
+      isPicture _ = False -- является ли документ picture-doc
+      isComposite (Composite _) = True
+      isComposite _ = True -- является ли документ composite-doc
+
+section
+  h4 Синтетический пример
+  p Функция, составляющая список использованных в документе картинок в виде списка массивов байт
+  pre.fragment
+    code.hs.
+      findPictures (Text _) = error "document is a text!"
+      findPictures (Picture pic) = pic
+      findPictures (Composite docs) =
+        concat $ map findPictures $ filter (not . isText) docs
+
+section
+  h4 Синтетический пример
+  p Функция, вычисляющая суммарную длину текста в документе
+  pre.fragment
+    code.hs.
+      textLength (Text txt) = length txt
+      textLength (Picture _) = 0
+      textLength (Composite docs) = sum $ map textLength $ docs
+
+section
+  h4 Синтетический пример
+  p Функция, заменяющая в документе все картинки на текст "&lt;img /&gt;"
+  pre.fragment
+    code.hs.
+      pic2tag (Text txt) = Text txt
+      pic2tag (Picture _) = Text "<img />"
+      pic2tag (Composite docs) = Composite (map pic2tag docs)
+
+section
+  h4 Синтетический пример
+  p Все такие функции тоже будут обладать общей структурой, и их тоже можно вычислять снизу вверх при помощи свертки
+  pre
+    code.hs.
+      foldDoc t p c doc = case doc of
+        Text txt -> t txt
+        Picture pic -> p pic
+        Composite docs -> c (map (foldDoc t p c) docs)
+
+section
+  h4 Синтетический пример
+  pre
+    code.hs.
+      findPictures2 = foldDoc (\x -> []) (\x -> x) concat
+  p.
+    В данном случае нельзя сказать, что функции получились короче или существенно читаемей.
+    Однако, по крайней мере, теперь точно не будет ошибок в самой процедуре обхода -
+    она написана и оттестирована всего 1 раз
+
+section
+  h4 Свёртки
+  p.
+    В общем случае, операцию свертки можно аналогичным образом определить для любой древовидной структуры.
+    Списки тоже являются частным случаем такой структуры
+  p.
+    После того, как мы познакомимся с классом типов Monoid, рассмотрим класс типов Foldable
