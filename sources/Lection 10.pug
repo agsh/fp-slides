@@ -1,0 +1,9 @@
+section
+  h4 Класс моноидов
+  pre
+    code.hs.
+      class  Monoid m  where
+        mappend   :: m -­> m -­> m
+        mempty :: m
+
+        mconcat :: [m] -> m
