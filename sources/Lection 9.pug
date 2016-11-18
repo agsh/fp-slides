@@ -66,11 +66,11 @@ section
 section
   h4 Списочный гомоморфизм
   table
-    thead
-      td
-      td #
-      td u
-      td m
+    tr
+      th
+      th #
+      th u
+      th m
     tr
       td sum
       td +
@@ -96,5 +96,235 @@ section
       td merge
       td []
       td \x -> [x]
+
+section
+  h4 Списочный гомоморфизм
+  p.
+    Чрезвычайно важно, что благодаря ассоциативности @,
+    в выражении x1 @ x2 @ x3 @ ... @ xn можно расставлять скобки как угодно,
+    вычисляя его в любом порядке (надо, однако, помнить, что @ не обязан быть коммутативным).
+
+section
+  h4 Удобство гомоморфизма на списках
+  img(src='./img/9-1.png')
+
+section
+  h4 Удобство гомоморфизма на списках
+  img(src='./img/9-2.png')
+
+section
+  h4 Удобство гомоморфизма на списках
+  pre
+    code.hs.
+      f ~ (map, reduce)
+
+      f [x] = map x
+
+      reduce A::[] B::[] = A @ B
+
+section
+  h4 Гомоморфизм
+  img(src='./img/9-3.png')
+
+section
+  h4 Гомоморфизм
+  ul
+    li.
+      Позволяет вычислить ответ для N элементов за log N фаз (соответствующих уровням дерева),
+      каждая из которых может быть распараллелена. На P процессорах можно ускорить программу в O(P/logP) раз.
+    li.
+      Позволяет при изменении значения какого-нибудь элемента перевычислить ответ для всего списка за O(log N) операций,
+      изменив только элементы по пути от измененного к корню.
+
+section
+  h4 Гомоморфизм
+  img(src='./img/9-4.png')
+
+section
+  h4 Гомоморфизм
+  p &copy; Евгений Кирпичёв
+  pre
+    code.
+      regEx = /^(a+ b* c)*$/
+
+      s0 --a--> s1
+      s1 --a--> s1
+      s1 --b--> s2
+      s1 --с--> s0 // bingo
+      s2 --b--> s2
+      s2 --c--> s0 // bingo
+      s? --?--> s3
+
+section
+  h4 Списочный гомоморфизм
+  pre
+    code.perl regEx = /(a+ b* c)*/
+  table
+    tr
+      th
+      th a
+      th b
+      th c
+    tr
+      th s0
+      td s1
+      td s3
+      td s3
+    tr
+      th s1
+      td s1
+      td s2
+      td s0
+    tr
+      th s2
+      td s3
+      td s2
+      td s0
+    tr
+      th s3
+      td s3
+      td s3
+      td s3
+  p.fragment эндоморфизм на S
+
+section
+  h4 Списочный гомоморфизм
+  pre
+    code.hs.
+      map x = \s -> fx s  -- fx – функция-столбец
+      reduce f g = f . g
+  table
+    tr
+      th
+      th a
+      th b
+      th c
+    tr
+      th s0
+      td s1
+      td s3
+      td s3
+    tr
+      th s1
+      td s1
+      td s2
+      td s0
+    tr
+      th s2
+      td s3
+      td s2
+      td s0
+    tr
+      th s3
+      td s3
+      td s3
+      td s3
+
+section
+  h4 Списочный гомомрфизм
+  img(src='./img/9-4.png')
+
+section
+  h4 Третья теорема о гомоморфизмах
+  p.
+    Если функция f выражается и в виде левой, и в виде правой свертки с одинаковым начальным значением
+    (но, возможно, разной операцией #), то она является списочным гомоморфизмом - и, следовательно,
+    допускает параллельное и инкрементальное вычисление с помощью дерева.
+
+section
+  h4 Классы типов
+  p Операция сравнения есть везде, но равны ли наши деревья?
+  pre
+    code.hs.
+      let a = list2tree [1,5,3,2]
+      a == a?
+  p полиморфизм
+
+section
+  h4 Классы типов
+  img(src='./img/9-6.jpg')
+
+section
+  h4 Классы типов
+  pre
+    code.hs.
+      class Eq a where
+        (==) :: a -> a -> Bool
+
+section
+  h4 Как это работает?
+  pre
+    code.hs.
+      (==) :: (Eq a) => a -> a -> Bool
+
+      instance Eq Integer where
+        x == y = x ‘integerEq‘ y
+
+section
+  h4 Классы типов
+  pre
+    code.hs.
+      data Tree a = EmptyTree | Node a (Tree a) (Tree a)
+        deriving (Show, Read)
+
+      instance (Eq a) => Eq (Tree a) where
+        EmptyTree == EmptyTree = True
+        (Node a l1 r1) == (Node b l2 r2) =
+          (a==b) && (l1 == l2) && (r1 == r2)
+        _ == _ = False
+
+section
+  h4 Классы типов
+  pre
+    code.hs.
+      class Eq a where
+        (==), (/=) :: a -> a -> Bool
+        x /= y = not (x == y)
+
+      class (Eq a) => Ord a where
+        (<), (<=), (>=), (>) :: a -> a -> Bool
+        max, min :: a -> a -> a
+
+section
+  h4 Классы типов
+  p #==# - списки равны или являются идентичными по перевороту:
+  pre
+    code.hs.
+      [1,2,3] #==# [1,2,3] -- True
+      [1,1,1] #==# [1,1,2] -- False
+      [1,2,3] #==# [3,2,1] -- True
+
+section
+  h4 Классы типов
+  pre
+    code.hs.
+      class Itch a where
+        (#==#) :: a -> a -> Bool
+
+      instance (Eq a) => Itch [a] where
+        [] #==# [] = True
+        x #==# y = (x == reverse y) || (x == y)
+
+section
+  h4 Классы типов
+  pre
+    code.hs.
+      lol a b = a #==# b
+
+      > :t lol
+      lol :: Itch a => a -> a -> Bool
+
+section
+  h4 Классы типов
+  p #==# - списки являются одинаковыми множествами (Set):
+  pre
+    code.hs.
+      [1,2,3] #==# [1,2,3] -- True
+      [1,1,1] #==# [1,1,2] -- False
+      [1,2,3] #==# [3,2,1] -- True
+      [1,2,2] #==# [2,1,2] -- True
+      [1,2,2] #==# [1,2] -- True
+      [1,2,15] #==# [13] -- False
+
 
 
