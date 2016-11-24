@@ -3,7 +3,131 @@ section
   pre
     code.hs.
       class  Monoid m  where
-        mappend   :: m -­> m -­> m
+        mappend   :: m ­> m ­> m
         mempty :: m
 
         mconcat :: [m] -> m
+
+section
+  h4 Класс моноидов
+  pre
+    code.hs.
+      mappend mempty x = x
+      mappend x mempty = x
+      mappend x (mappend y z) = mappend (mappend x y) z
+      mconcat = foldr mappend mempty
+
+section
+  h4 Класс моноидов
+  pre
+    code.hs.
+      Data.Monoid
+
+      -- Списки
+      instance Monoid [a] where
+      mappend = (++)
+      Mempty = []
+
+      -- Числа
+      instance Monoid Integer where
+      mappend = (+)
+      Mempty = 0
+
+      instance Monoid Integer where
+      mappend = (*)
+      mempty = 1
+
+section
+  h4 Класс моноидов
+  pre
+    code.hs.
+      -- Обёртки
+      Num a => Monoid (Sum a)
+
+      newtype Sum a = Sum { getSum :: a }
+              deriving (Eq, Ord, Read, Show, Bounded)
+
+      Num a => Monoid (Product a)
+
+      newtype Product a = Product { getProduct :: a }
+              deriving (Eq, Ord, Read, Show, Bounded)
+
+      mconcat [Sum 1, Sum 2, Sum 3, Sum 4] = Sum 10
+      -- На самом деле, Sum {getSum = 10}, но это неважно! newtype
+
+      mconcat [Product 1, Product 2, Product 3, Product 4] = [Product 24]
+
+section
+  h4 Класс моноидов (Writer)
+  pre
+    code.hs.
+      newtype Writer w a = Writer { runWriter :: (a, w) }
+      -- В чём отличие data от newtype?
+
+      instance (Monoid w) => Monad (Writer w) where
+        return x = Writer (x, mempty)
+        (Writer (x,v)) >>= f =
+          let (Writer (y, v')) = f x
+          in Writer (y, v `mappend` v')
+
+      .:t tell
+      tell :: MonadWriter w m => w -> m ()
+
+section
+  pre
+    code.hs.
+      import Control.Monad.Writer
+
+      fact :: Integer -> Writer String Integer
+      fact 0 = return 1
+      fact n = do
+        let n' = n-1
+        tell $ show n ++ " - 1 \n"
+        m <- fact n'
+        tell $ "fact " ++ show m ++ "\n"
+        let r = n*m
+        tell $ show n ++ " * " ++ show m ++ "\n"
+        return r
+
+      .:t runWriter
+      runWriter :: Writer w a -> (a, w)
+
+      putStr $ snd $ runWriter $ fact 10
+
+section
+  pre
+    code.hs.
+      import Control.Monad.Writer
+
+      fact2 :: Integer -> Writer (Sum Integer) Integer
+      fact2 0 = return 1
+      fact2 n = do
+        let n' = n-1
+        tell $ Sum 1
+        m <- fact2 n'
+        let r = n*m
+        tell $ Sum 1
+        return r
+
+      -- Первая лаба
+      putStr $ snd $ runWriter $ fact2 10
+
+section
+  pre
+    code.hs.
+      import Control.Monad.State
+
+      fact3 :: Integer -> State Integer Integer
+      fact3 0 = return 1
+      fact3 n = do
+        let n' = n-1
+        modify (+1)
+        m <- fact3 n'
+        let r = n*m
+        modify (+1)
+        return r
+
+      runState (fact3 10) 0
+
+      -- Writer понятнее
+
