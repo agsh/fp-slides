@@ -77,7 +77,6 @@ section
   pre
     code.hs.
       import Control.Monad.Writer
-
       fact :: Integer -> Writer String Integer
       fact 0 = return 1
       fact n = do
@@ -91,7 +90,6 @@ section
 
       .:t runWriter
       runWriter :: Writer w a -> (a, w)
-
       putStr $ snd $ runWriter $ fact 10
 
 section
@@ -131,3 +129,117 @@ section
 
       -- Writer понятнее
 
+section
+  h4 Ещё два моноида: Any, All
+  pre
+    code.hs.
+      import Control.Monad.Writer
+
+      fact4 :: Integer -> Writer Any Integer
+      fact4 0 = return 1
+      fact4 n = do
+        let n' = n-1
+        m <- fact4 n'
+        let r = n*m
+        tell (Any (r==120))
+        return r
+
+      > runWriter $ fact 2
+      > runWriter $ fact 10
+
+section
+  h4 Коммутативные, некоммутативные, двойные моноиды
+  pre
+    code.hs.
+      (+), (++)
+      -- Законы моноидов
+
+      fact5 :: Integer -> Writer (Dual String) Integer
+      fact5 0 = return 1
+      fact5 n = do
+        let n' = n-1
+        tell $ Dual $ show n ++ " - 1\n"
+        m <- fact5 n'
+        tell $ Dual $ "fact " ++ show m ++ "\n"
+        let r = n*m
+        tell $ Dual $ show n ++ " * " ++ show m ++ "\n"
+        return r
+
+      let Dual a = snd $ runWriter $ fact5 10
+      putStrLn a
+
+section
+  h4 Умножение моноидов
+  pre
+    code.hs.
+      instance (Monoid a,Monoid b) => Monoid (a,b) where
+          mempty = (mempty, mempty)
+          mappend (u,v) (w,x) = (u `mappend` w,v `mappend` x)
+
+section
+  h4 Умножение моноидов
+  pre
+    code.hs.
+      tellFst a = tell $ (a,mempty)
+      tellSnd b = tell $ (mempty,b)
+
+      fact6 :: Integer -> Writer (String,Sum Integer) Integer
+      fact6 0 = return 1
+      fact6 n = do
+        let n' = n-1
+        tellSnd (Sum 1)
+        tellFst $ show n ++ " - 1 \n"
+        m <- fact6 n'
+        let r = n*m
+        tellSnd (Sum 1)
+        tellFst $ show n ++ " * " ++ show m ++ "\n"
+        return r
+
+section
+  h4 Снова свёртки
+  pre
+    code.hs.
+      import Data.Foldable
+
+      data Tree a = EmptyTree | Node a (Tree a) (Tree a)
+        deriving (Show, Read)
+
+      instance Foldable Tree where
+        foldMap f EmptyTree = mempty
+        foldMap f (Node k l r) = foldMap f l `mappend` f k `mappend`
+          foldMap f r
+
+      let tree = list2tree [1,4,6,8]
+
+      foldMap (Any . (== 1)) tree
+      foldMap (All . (> 5)) tree
+      foldMap (All . even) tree
+
+section
+  h4 Снова свёртки
+  p Найти минимальный и максимальный элемент дерева, сконструировав моноид.
+  pre
+    code.hs.
+      min, max
+      maxBound::Int, maxBound::Float, minBound::Bool
+      deriving Eq, Ord, Read, Show, Bounded
+
+      list2tree ([3,1,5,87,4]) :: (Num a, Ord a) => Tree a
+      list2tree ([3,1,5,87,4]::[Int]) :: Tree Int
+
+      foldMap ( ??? ) (tree::[Int])
+
+section
+  h4 Снова свёртки
+  pre
+    code.hs.
+      newtype Max a = Max { getMax :: a }
+              deriving (Eq, Ord, Read, Show, Bounded)
+
+      instance (Num a, Ord a, Bounded a) => Monoid (Max a) where
+              mempty = minBound
+              Max x `mappend` Max y = Max $ max x y
+
+section
+  h4 Итого
+  p Интерфейс моноидов нужен для реализации алгоритмов, включая распараллеливание и поиск по дереву
