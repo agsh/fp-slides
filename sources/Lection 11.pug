@@ -1,0 +1,248 @@
+section
+  h4 Деревья
+  pre
+    code.hs.
+      data Tree a = Empty | Node a (Tree a) (Tree a)
+
+      list2tree :: [a] -> Tree a
+      list2tree
+  p Написать функцию, строящую сбалансированное дерево в один проход
+  p Это не дерево поиска!
+
+section
+  h4 Деревья
+  pre
+    code.hs.
+      list2tree xs = fst (build (length xs) xs)
+
+      build :: Int -> [a] -> (Tree a, [a])
+      build 0 xs = (Empty, xs)
+      build 1 (x:xs) = (Node x Empty Empty, xs)
+      build n (x:xs) = (Node x u v, xs'')
+        where
+        m = div (n-1) 2
+        (u, xs') = build m xs
+        (v, xs'') = build (n-1-m) xs'
+
+section
+  h4 Категории
+  div
+    img(src='./img/11-0.png')
+  div
+    ul
+     li набор объектов
+     li набор морфизмов
+
+section
+  h4 Категории
+  p Разные аксиомы
+  div
+    ul
+      li композиция ассоциативна
+      li есть тождественный морфизм
+  div
+    img(src='./img/11-1.gif')
+  p &copy; wikipedia
+
+section
+  h4 Категории
+  p когда домен = кодомен, это – эндоморфизм
+  p классический пример: категория Set
+  p объекты категории Set — это всевозможные множества, а морфизмы — это функции между этими множествами.
+
+section
+  h4 категория Hask
+  p объекты — это типы данных, возможные в языке Haskell: Int, [], Tree, a, b
+  p а морфизмы — функции языка Haskell: Int → Int, (a → b) → a → b, Tree → Int
+
+section
+  h4 Категории
+  pre
+    code.hs.
+      class  Category (~>)  where
+        (.) :: (a ~> b) ­-> (b ~> c) -­> (a ~> c)
+        id  :: a ~> a
+  p законы:
+  ul
+    li ∀ a, b, c : a . (b . c) = (a . b) . c
+    li ∀ m : m . id = m = id . m
+
+section
+  h4 Функторы
+  p.
+    функтор F — это отображение между категориями, такое, что структура категории сохраняется или,
+    другими словами, это гомоморфизм между двумя категориями
+  p.
+    При этом функтор отображает объекты первой категории в объекты второй,
+    а морфизмы первой — в морфизмы второй категории.
+    К тому же накладываются определённые ограничения — аксиомы.
+  p.
+    Если функтор отображает категорию саму в себя, такой функтор называется эндофунктором.
+
+section
+  h4 Функторы
+  p Любой конструктор выполняет преобразования
+  p []: a → [a]
+  p Maybe: b → Maybe b: Just b | Nothing
+  p data C c = …
+  p C: c → C c
+  p.
+    Если теперь такое отображение объектов (конструктор типов C с одним параметром) дополнить отображением морфизмов,
+    то получим функтор, действующий из Hask в Hask, эндофунктор на категории Hask.
+
+section
+  h4 Функторы
+  pre
+    code.hs.
+      class Functor f where
+         fmap :: (a -> b) -> f a -> f b
+  ul
+    li
+      pre ∀ f, g : fmap f . fmap g = fmap (f . g)
+    li
+      pre.
+        fmap id = id
+        id x = x
+        fmap id x = id x
+
+section
+  h4 Функторы (Списки)
+  pre
+    code.hs.
+      > map (+1) [1,2,3,4,5]
+      [2,3,4,5,6]
+
+      instance Functor [] where
+        fmap = map
+
+section
+  h4 Функторы (Списки)
+  pre
+    code.hs.
+      fmap id = id
+      fmap (g . h) = fmap g . fmap h
+
+      (read . show $ 4)::Int
+      fmap (show . (+2)) [1..4]
+      (fmap show . fmap (+2)) [1..4]
+
+section
+  h4 Функторы (Деревья)
+  pre
+    code.hs.
+      instance Functor Tree where
+        fmap g EmptyTree = EmptyTree
+        fmap g (Node a l r) = Node (g a) (fmap g l) (fmap g r)
+
+section
+  h4 Функторы
+  pre
+    code.hs.
+      fmap length (list2tree ["goodbye", "cruel", "world"])
+
+section
+  h4 Функторы
+  pre
+    code.hs.
+      instance Functor Maybe where
+         fmap f (Just x) = Just (f x)
+         fmap _ Nothing  = Nothing
+
+      (fmap show . fmap (+2)) $ Just 4
+      (fmap show . fmap (+2)) $ Nothing
+
+section
+  h4 Функторы
+  pre
+    code.hs.
+      instance Functor Maybe where
+         fmap f (Just x) = Just (f x)
+         fmap _ Nothing  = Nothing
+
+      Доказать, что
+      fmap (f . g) = fmap f . fmap g
+      fmap (f . g) F = fmap f (fmap g F)
+
+section
+  h4 Понимание функтора
+  pre
+    code.hs.
+      :t fmap
+
+      fmap :: Functor f => (a -> b) -> f a -> f b
+
+      fmap :: Functor f => (a -> b) -> (f a -> f b)
+
+      .:t fmap (show . (1+))
+      ... :: (Functor f, Num b, Show b) => f b -> f String
+
+      .:t fmap (replicate 3)
+      ... :: Functor f => f a -> f [a]
+
+      fmap (replicate 3) [1,2,3]
+      fmap (replicate 3) $ Just 2
+
+      fmap (replicate 3) Just 2 ?
+
+section
+  h4 Аппликативные функторы
+  pre
+    code.hs.
+      let a = fmap (*) [1,2,3,4]
+      .:t a
+      a :: [Integer -> Integer]
+      fmap (\f -> f 9) a
+      [9,18,27,36]
+
+      import Control.Applicative
+
+      class (Functor f) => Applicative f where
+      pure :: a -> f a
+      (<*>) :: f (a -> b) -> f a -> f b
+
+section
+  h4 Аппликативные функторы (Maybe)
+  pre
+    code.hs.
+      instance Applicative Maybe where
+          pure = Just
+          Nothing <*> _ = Nothing
+          (Just f) <*> something = fmap f something
+
+      Just (+3) <*> Just 9
+      pure (+3) <*> Just 9
+      Just (++"hahah") <*> Nothing
+      Nothing <*> Just "woot"
+
+      pure (+) <*> Just 3 <*> Just 5
+      pure (\x y z -> x + y + z) <*> Just 3 <*> Just 5 <*> Just 2
+
+section
+  h4 Аппликативные функторы (Maybe)
+  pre
+    code.hs.
+      (<$>) :: (Functor f) => (a -> b) -> f a -> f b
+      f <$> x = fmap f x
+
+      pure (\x y z -> x + y + z) <*> Just 3 <*> Just 5 <*> Just 2
+      (\x y z -> x + y + z) <$> Just 3 <*> Just 5 <*> Just 2
+
+section
+  h4 Аппликативные функторы (List)
+  pre
+    code.hs.
+      instance Applicative [] where
+      pure x = [x]
+      fs <*> xs = [f x | f <- fs, x <- xs]
+
+      [(*0),(+100),(^2)] <*> [1,2,3]
+      [0,0,0,101,102,103,1,4,9]
+
+      [(+),(*)] <*> [1,2] <*> [3,4]
+      [4,5,5,6,3,4,6,8]
+
+      [ x*y | x <- [2,5,10], y <- [8,10,11]]
+      [16,20,22,40,50,55,80,100,110]
+
+      (*) <$> [2,5,10] <*> [8,10,11]
+      [16,20,22,40,50,55,80,100,110]
