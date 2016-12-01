@@ -232,8 +232,8 @@ section
   pre
     code.hs.
       instance Applicative [] where
-      pure x = [x]
-      fs <*> xs = [f x | f <- fs, x <- xs]
+        pure x = [x]
+        fs <*> xs = [f x | f <- fs, x <- xs]
 
       [(*0),(+100),(^2)] <*> [1,2,3]
       [0,0,0,101,102,103,1,4,9]
@@ -246,3 +246,32 @@ section
 
       (*) <$> [2,5,10] <*> [8,10,11]
       [16,20,22,40,50,55,80,100,110]
+
+section
+  h4 Аппликативные функторы (ZipList)
+  pre
+    code.hs.
+      instance Applicative ZipList where
+        pure x = ZipList (repeat x)
+        ZipList fs <*> ZipList xs =
+          ZipList (zipWith (\f x -> f x) fs xs)
+
+      getZipList $ (+) <$> ZipList [1,2,3] <*> ZipList [1,1,1]
+      [2,3,4]
+
+      getZipList $ (+) <$> ZipList [1,2,3] <*> ZipList [1,1..]
+      [2,3,4]
+
+      getZipList $ (,,) <$> ZipList "dog" <*> ZipList "cat" <*> ZipList "rat"
+      [('d','c','r'),('o','a','a'),('g','t','t')]
+
+section
+  h4 Аппликативные функторы
+  pre
+    code.hs.
+      liftA2 :: (Applicative f) => (a -> b -> c) -> f a -> f b -> f c
+      liftA2 f a b = f <$> a <*> b
+
+      liftA2 (:) (Just 1) (Just [2])
+
+      liftA3 (,,) [1] [2] [3]
