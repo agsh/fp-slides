@@ -275,3 +275,46 @@ section
       liftA2 (:) (Just 1) (Just [2])
 
       liftA3 (,,) [1] [2] [3]
+
+section
+  h4 Аппликативные функторы
+  pre
+    code.hs.
+      sequenceA :: (Applicative f) => [f a] -> f [a]
+      sequenceA [] = pure []
+      sequenceA (x:xs) = (:) <$> x <*> sequenceA xs
+
+      sequenceA [Just 3, Just 2, Just 1]
+      sequenceA [Just 3, Nothing, Just 1]
+      sequenceA [(+3),(+2),(+1)] 3
+      sequenceA [[1,2,3],[4,5,6]]
+      sequenceA [[1,2,3],[4,5,6],[3,4,4],[]]
+
+      -- sequenceA через свертку !
+
+section
+  h4 Аппликативные функторы
+  pre
+    code.hs.
+      sequenceA :: (Applicative f) => [f a] -> f [a]
+      sequenceA = foldr (liftA2 (:)) (pure [])
+
+      and $ map (\f -> f 7) [(>4),(<10),odd]
+      True
+
+      and $ sequenceA [(>4),(<10),odd] 7
+      True
+
+      .:t getLine
+      getLine :: IO String
+
+      sequenceA [getLine, getLine, getLine]
+
+section
+  h4 Аппликативные функторы
+  pre
+    code.hs.
+      pure f <*> x = fmap f x
+      pure id <*> v = v
+      pure (.) <*> u <*> v <*> w = u <*> (v <*> w)
+      pure f <*> pure x = pure (f x)
