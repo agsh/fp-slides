@@ -250,6 +250,7 @@ section
   h4 Аппликативные функторы (ZipList)
   pre
     code.hs.
+      newtype ZipList a = ZipList { getZipList :: [a] }
       instance Applicative ZipList where
         pure x = ZipList (repeat x)
         ZipList fs <*> ZipList xs =
@@ -261,7 +262,8 @@ section
       getZipList $ (+) <$> ZipList [1,2,3] <*> ZipList [1,1..]
       [2,3,4]
 
-      getZipList $ (,,) <$> ZipList "dog" <*> ZipList "cat" <*> ZipList "rat"
+      getZipList $ (,,) <$> ZipList "dog"
+        <*> ZipList "cat" <*> ZipList "rat"
       [('d','c','r'),('o','a','a'),('g','t','t')]
 
 section
@@ -295,8 +297,8 @@ section
   h4 Аппликативные функторы
   pre
     code.hs.
-      sequenceA :: (Applicative f) => [f a] -> f [a]
-      sequenceA = foldr (liftA2 (:)) (pure [])
+      sequenceA' :: (Applicative f) => [f a] -> f [a]
+      sequenceA' = foldr (liftA2 (:)) (pure [])
 
       and $ map (\f -> f 7) [(>4),(<10),odd]
       True
