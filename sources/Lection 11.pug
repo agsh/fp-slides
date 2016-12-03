@@ -4,8 +4,8 @@ section
     code.hs.
       data Tree a = Empty | Node a (Tree a) (Tree a)
 
-      list2tree :: [a] -> Tree a
-      list2tree xs = ?
+      list2tree2 :: [a] -> Tree a
+      list2tree2 xs = ?
   p Написать функцию, строящую сбалансированное дерево в один проход
   p Это не дерево поиска!
 
@@ -13,7 +13,7 @@ section
   h4 Деревья
   pre
     code.hs.
-      list2tree xs = fst (build (length xs) xs)
+      list2tree2 xs = fst (build (length xs) xs)
 
       build :: Int -> [a] -> (Tree a, [a])
       build 0 xs = (Empty, xs)
