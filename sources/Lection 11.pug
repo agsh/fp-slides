@@ -148,6 +148,7 @@ section
          fmap _ Nothing  = Nothing
 
       (fmap show . fmap (+2)) $ Just 4
+      (fmap (show . (+2))) $ Just 4
       (fmap show . fmap (+2)) $ Nothing
 
 section
