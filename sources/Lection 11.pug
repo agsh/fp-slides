@@ -147,9 +147,9 @@ section
          fmap f (Just x) = Just (f x)
          fmap _ Nothing  = Nothing
 
-      (fmap show . fmap (+2)) $ Just 4
-      (fmap (show . (+2))) $ Just 4
-      (fmap show . fmap (+2)) $ Nothing
+      fmap show . fmap (+2) $ Just 4
+      fmap (show . (+2)) $ Just 4
+      fmap show . fmap (+2) $ Nothing
 
 section
   h4 Функторы
