@@ -2,27 +2,12 @@ section
   h4 Деревья
   pre
     code.hs.
-      data Tree a = Empty | Node a (Tree a) (Tree a)
+      data Tree a = EmptyTree | Node a (Tree a) (Tree a)
 
-      list2tree :: [a] -> Tree a
-      list2tree xs = ?
+      list2tree2 :: [a] -> Tree a
+      list2tree2 xs = ?
   p Написать функцию, строящую сбалансированное дерево в один проход
   p Это не дерево поиска!
-
-section
-  h4 Деревья
-  pre
-    code.hs.
-      list2tree xs = fst (build (length xs) xs)
-
-      build :: Int -> [a] -> (Tree a, [a])
-      build 0 xs = (Empty, xs)
-      build 1 (x:xs) = (Node x Empty Empty, xs)
-      build n (x:xs) = (Node x u v, xs'')
-        where
-        m = div (n-1) 2
-        (u, xs') = build m xs
-        (v, xs'') = build (n-1-m) xs'
 
 section
   h4 Категории
@@ -137,7 +122,7 @@ section
   h4 Функторы
   pre
     code.hs.
-      fmap length (list2tree ["goodbye", "cruel", "world"])
+      fmap length (list2tree2 ["goodbye", "cruel", "world"])
 
 section
   h4 Функторы
@@ -147,8 +132,9 @@ section
          fmap f (Just x) = Just (f x)
          fmap _ Nothing  = Nothing
 
-      (fmap show . fmap (+2)) $ Just 4
-      (fmap show . fmap (+2)) $ Nothing
+      fmap show . fmap (+2) $ Just 4
+      fmap (show . (+2)) $ Just 4
+      fmap show . fmap (+2) $ Nothing
 
 section
   h4 Функторы
