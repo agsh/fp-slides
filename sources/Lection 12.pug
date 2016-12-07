@@ -1,0 +1,69 @@
+section
+  h4 Монада
+  p Монада – моноид в категории эндофункторов &copy; wikipedia
+  p.
+    Пусть у нас есть какой-нибудь эндофунктор на категории Hask (т.е. тип f, являющийся экземпляром класса Functor).
+    Дополним его структурой моноида.
+  p.
+    Обобщённый моноид M в моноидальной категории C — это морфизм (++) в этой категории из M ⊗ M в M,
+    а также морфизм mempty из I в M.
+  pre
+    code.hs.
+      class  MonoidCat (~>) ( ⊗) I => Monoid (~>) (⊗) I M  where
+        (++) :: M M -> M   (join :: Monad m => m (m a) -> m a)
+        mempty :: I -> M
+
+section
+  h4 Монады. Зачем?
+  img(src='./img/12-0.jpg')
+
+section
+  h4 return
+  pre
+    code.hs.
+      class Monad m where
+        (>>=) :: m a -> (a -> m b) -> m b
+        return :: a -> m a
+
+      > :t return
+      return :: Monad m => a -> m a
+      > return "Hello" == Just "Hello"
+      ?
+      > return "Hello" == ["Hello"]
+      ?
+
+section
+  h4 Do-нотация
+  pre
+    code.hs.
+      do {p} = p
+      do {p;stmts} = p >> do {stmts}
+      do {x <- p;stmts} = p >>= \x -> do {stmts}
+
+section
+  h4 Законы монад
+  p Согласованность
+  pre
+    code.hs.
+      (p >>= return) = p
+      do {x <- p; return x} = do {p}
+  pre
+    code.hs.
+      (return e >>= f) = f e
+      do {x <- return e; f x} = do {f e}
+
+section
+  h4 Законы монад
+  p Ассоциативность (>>=)
+  pre
+    code.hs.
+      ((p >>= f) >>= g) = p >>= (\x -> (f x >>= g))
+  p Этот закон позволяет воспринимать последовательность a ; b ; c ; ... как монолитную и не заботиться о расстановке скобок в ней.
+
+section
+  h4 Законы монад
+  p Композиция Клейсли
+  pre
+    code.hs.
+      (>=>) :: Monad m => (a -> m b) -> (b -> m c) -> (a -> m c)
+      (f >=> g) x = f x >>= g
