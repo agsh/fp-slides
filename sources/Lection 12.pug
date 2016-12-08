@@ -67,3 +67,118 @@ section
     code.hs.
       (>=>) :: Monad m => (a -> m b) -> (b -> m c) -> (a -> m c)
       (f >=> g) x = f x >>= g
+
+section
+  h4 Законы монад
+  div
+    pre
+      code.hs.
+        > let x = [1,2,3]
+        > (x >>= return) == x
+        ?
+  div.fragment
+    pre
+      code.hs.
+        True
+    p (согласованность) правая единица (x >>= return) = x
+    p Можно переписать этот закон как
+    pre
+      code.hs.
+        (x >>= (\a -> return a)) = x
+    p.
+      то есть, связывание монадного вычисления x с вычислением, зависящим от параметра и просто-напросто возвращающим
+      этот параметр, есть тождественная функция
+
+section
+  h4 Стандартные монады
+  p Монада Identity (тождественная монада), не меняет ни тип значений, ни стратегию связывания вычислений.
+  pre
+    code.hs.
+      data Identity a = Identity a
+        return a = Identity a
+        (Identity a) >>= f = f a
+
+section
+  h4 Стандартные монады
+  p Maybe (монада вычислений с обработкой отсутствующих значений)
+  pre
+    code.hs.
+      data Maybe a = Nothing | Just a
+
+      return a = Just a
+      Nothing >>= f = Nothing
+      (Just a) >>= f = f a
+
+section
+  h4 Maybe
+  pre
+    code.hs.
+      lookup :: a -> [(a, b)] -> Maybe b
+
+      case lookup 'f' [('f','u'),('n','n'),('y','?')] of
+        Nothing -> Nothing
+        Just y -> case lookup y [('o','l'),('u','c'),('k','y')] of
+          Nothing -> Nothing
+          Just z -> lookup z [('d','u'),('c','k')]
+
+section
+  h4 Maybe
+  pre
+    code.hs.
+      lookup 'f' [('f','u'),('n','n'),('y','?')] >>=
+        (\a -> lookup a [('o','l'),('u','c'),('k','y')]) >>=
+          (\b → lookup b [('d','u'),('c','k')])
+
+section
+  h4 Maybe
+  pre
+    code.hs.
+      lookupM list a = lookup a list
+      lookupM list = \a -> lookup a list
+      lookupM = flip lookup
+
+      Just 'f' >>=
+        lookupM [('f','u'),('n','n'),('y','?')] >>=
+          lookupM [('o','l'),('u','c'),('k','y')] >>=
+            lookupM [('d','u'),('c','k')]
+
+section
+  h4 Maybe (do)
+  pre
+    code.hs.
+      do
+        y <- lookup 'f' [('f','u'),('n','n'),('y','?')]
+        z <- lookup y [('o','l'),('u','c'),('k','y')]
+        return (lookup z [('d','u'),('c','k')])
+
+section
+  h4 Maybe
+  pre
+    code.hs.
+      maybeHalf :: Int -> Maybe Int
+      maybeHalf a
+        | even a = Just (div a 2)
+        | otherwise = Nothing
+
+      > Just 10 >>= maybeHalf
+      Just 5
+      > Just 10 >>= maybeHalf >>= maybeHalf
+      Nothing
+      > Just 10 >>= maybeHalf >>= maybeHalf >>= maybeHalf
+      Nothing
+
+section
+  h4 Maybe
+  pre
+    code.hs.
+      maybeHalfN :: Int -> Int -> Maybe Int
+      ?
+  pre.fragment
+    code.hs.
+      maybeHalfN :: Int -> Int -> Maybe Int
+      maybeHalfN 0 a = Just a
+      maybeHalfN n a = maybeHalf a >>= (\x -> maybeHalfN (n-1) x)
+
+      maybeHalfN n a = do
+        result <- maybeHalf a
+        maybeHalfN (n-1) a
