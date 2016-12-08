@@ -95,8 +95,9 @@ section
   pre
     code.hs.
       data Identity a = Identity a
-        return a = Identity a
-        (Identity a) >>= f = f a
+
+      return a = Identity a
+      (Identity a) >>= f = f a
 
 section
   h4 Стандартные монады
@@ -182,3 +183,400 @@ section
       maybeHalfN n a = do
         result <- maybeHalf a
         maybeHalfN (n-1) a
+
+section
+  h4 Стандартные монады
+  p Монада List (вычисления, которые могут возвращать 0 или более результатов)
+  p.
+    В этой монаде значения представляют собой списки, которые можно интерпретировать как несколько возможных результатов
+    одного вычисления. Если одно вычисление зависит от другого, то второе вычисление производится для каждого результата
+    первого, и полученные результаты (второго вычисления) собираются в список.
+  pre
+    code.hs.
+      return a = [a]
+      params >>= f = concat [f x | x <- params]
+
+section
+  h4 List
+  p.
+    Таким образом, params >>= f :: [b], как и следовало ожидать – это список возможных результатов применения функции к
+    каждому из вариантов входного аргумента.
+  pre
+    code.hs.
+      let x = [1 .. 5] >>= (\x -> [x .. x+3 ])
+  pre
+    code.fsharp.
+      [1,2,3,4] |> filter (fun x -> odd x)
+  pre
+    code.hs.
+      ["~/music", "~/work"] >>= getDirectoryContents =
+        ["~/music/Bach", "~/music/Beethoven", "~/music/Rammstein",
+          "~/work/projects", "~/work/documents"]
+
+section
+  h4 Bind
+  pre
+    code.hs.
+      (>>=) :: Maybe a -> (a -> Maybe b) -> Maybe b
+
+      hiAll :: Maybe String
+      hiAll = Just “Hello” >>= (\x ->
+            Just " all" >>= (\y ->
+            Just (x ++ y)))
+
+      hiAll :: Maybe String
+      hiAll = do
+          x <- Just “Hello”
+          y <- Just " all"
+          return (x ++ y) -- Just  (x ++ y)
+
+section
+  h4 Bind
+  pre
+    code.hs.
+      (>>=) :: [a] -> (a -> [b]) -> [b]
+
+      [(x, y) | x <- [1, 2, 3], y <- [1, 2, 3], x /= y]
+
+      do
+        x <- [1, 2, 3]
+        y <- [1, 2, 3]
+        True <- return (x /= y)
+        return (x, y)
+
+      [1, 2, 3] >>= (\x -> [1, 2, 3] >>= (\y -> return (x /= y) >>=
+        (\r -> case r of
+          True -> return (x, y)
+          _    -> fail "")))
+
+section
+  h4 Стандартные монады
+  p.
+    Монада IO, определяет операцию (>>=) как последовательное выполнение двух её операндов, а результат выполнения
+    первого операнда последовательно передаётся во второй
+  pre
+    code.hs.
+      class Monad m where
+        (>>=)  :: m a    -> (a -> m b) -> m b
+        (>>)   :: m a    -> m b -> m b
+        return :: a      -> m a
+        fail   :: String -> m a
+
+      m >> k = m >>= \_ -> k
+
+section
+  h4 IO return
+  pre
+    code.hs.
+      numIO :: IO Int
+      numIO = return 42
+
+      let numIO2 = (return 42) :: IO Int
+
+      (return ()) :: IO ()
+
+section
+  h4 IO
+  pre
+    code.hs.
+      putChar :: Char -> IO ()
+      putChar 'x'
+
+      (>>) :: IO () -> IO () -> IO ()
+      putChar 'x' >> putChar '\n'
+
+      putCharLn x = putChar x >> putChar '\n'
+
+      return :: a -> IO a
+
+      psLn :: String -> IO ()
+      psLn xs = ?
+    code.hs.fragment.
+      psLn :: String -> IO ()
+      psLn [] = putChar '\n'
+      psLn (x:xs) = putChar x >> psLn xs
+    code.hs.fragment.
+      psLn xs = foldr (>>) (return ()) (map putChar xs) >> putChar '\n'
+      psLn xs = foldr (>>) (putChar '\n') (map putChar xs)
+      >:t map putChar []
+
+section
+  h4 IO
+  pre
+    code.hs.
+      getChar :: IO Char
+
+      (>>=) :: IO a -> (a -> IO b) -> IO b
+
+      gl :: IO [Char]
+      gl = getChar >>= \x ->
+              if x == '\n' then return []
+              else getLine >>= \xs -> return (x:xs)
+
+section
+  h4 IO (do-нотация)
+  pre
+    code.hs.
+      gl = do
+        x <- getChar
+        if x == '\n' then return []
+        else do
+          xs <- gl
+          return (x:xs)
+
+section
+  h4 IO - функтор
+  pre
+    code.hs.
+      instance Functor IO where
+        fmap f action = do
+          result <- action
+          return (f result)
+
+      main = do
+        line <- getLine
+        let line' = (++ "!") line
+        putStrLn line
+
+      main = do
+        line <- fmap (++ "!") getLine -- line <- fmap ((++ "!") . reverse) getLine
+        putStrLn line
+
+section
+  h4 IO - аппликативный функтор
+  pre
+    code.hs.
+      instance Applicative IO where
+        pure = return
+        a <*> b = do
+          f <- a
+          x <- b
+          return (f x)
+
+      concatLines :: IO String
+      concatLines = do
+        a <- getLine
+        b <- getLine
+        return $ a ++ b
+
+      concatLines :: IO String
+      concatLines = (++) <$> getLine <*> getLine
+
+section
+  h4 IO
+  pre
+    code.hs.
+      import Control.Monad
+      import System.Random
+
+      randomRIO (1,6)
+
+      rollDiceIO :: IO (Int, Int)
+      rollDiceIO = liftM2 (,) (randomRIO (1,6)) (randomRIO (1,6))
+      rollDiceIO = (,) <$> (randomRIO (1,6)) <*> (randomRIO (1,6))
+
+      rollNDiceIO ?
+
+section
+  h4 IO
+  pre
+    code.hs.
+      rollNDiceIO :: Int -> IO [Int]
+      rollNDiceIO 0 = return []
+      rollNDiceIO n =
+        randomRIO (1, 6) >>=
+          (\num -> rollNDiceIO (n-1) >>=
+            (\list -> return (num:list)))
+
+section
+  h4 IO
+  pre
+    code.hs.
+      rollNDiceIO :: Int -> IO [Int]
+      rollNDiceIO 0 = return []
+      rollNDiceIO n = do
+        num <- randomRIO (1, 6)
+        list <- rollNDiceIO (n-1)
+        return (num:list)
+
+section
+  h4 Коммутативность IO
+  pre
+    code.hs.
+      num <- randomRIO (1, 6)
+      list <- rollNDiceIO (n-1)
+      return (num:list)
+
+      list <- rollNDiceIO (n-1)
+      num <- randomRIO (1, 6)
+      return (num:list)
+
+section
+  h4 ФВП и IO
+  pre
+    code.hs.
+      rollNDiceIO :: Int -> IO [Int]
+      rollNDiceIO n = replicateM n (randomRIO (1, 6))
+
+      rollNDiceIO n = sequence $ map (\a -> randomRIO(1,6)) [1..n]
+
+section
+  h4 Control.Monad
+  pre
+    code.hs.
+      sequence :: Monad m => [m a] -> m [a]
+      mapM, mapM_  :: Monad m => (a -> m b) -> [a] -> m [b]
+      putStr  :: String -> IO ()
+      foldM :: Monad m => (a -> b -> m a) -> a -> [b] -> m a
+      liftM :: Monad m => (a1 -> r) -> m a1 -> m r
+      ap :: Monad m => m (a -> b) -> m a -> m b
+      return f `ap` x1 `ap` ... `ap` xn
+      -- return (,,) `ap` (Just 4) `ap` (Just 2) `ap` (Just 3)
+      liftMn f x1 x2 ... xn
+      -- :t liftM3 (,,)
+      fail :: String -> m a
+
+section
+  h4 Монада State
+  pre
+    code.hs.
+      import Control.Monad.State
+      fact3 :: Integer -> State Integer Integer
+      fact3 0 = return 1
+      fact3 n = do
+        let n' = n-1
+        modify (+1)
+        m <- fact3 n'
+        let r = n*m
+        modify (+1)
+        return r
+
+      runState (fact3 10) 0
+
+section
+  h4 Монада State
+  pre
+    code.hs.
+      type State s a = s -> (a,s)
+
+      return :: a -> State s a
+      return x = State ( \ st -> (x, st) )
+
+      put :: s -> State s ()
+      get :: State s s
+      state :: (s -> (a,s)) -> State s a
+      runState State s a -> (s -> (a, s))
+      evalState State s a -> s -> a
+
+section
+  h4 State
+  pre
+    code.hs.
+      newtype State s a = State { runState :: s -> (a, s) }
+      instance Monad (State s) where
+        return :: a -> State s a
+        return x = State ( \ st -> (x, st) )
+        (>>=) :: State s a -> (a -> State s b) -> State s b
+        processor >>= processorGenerator = State $ \ st ->
+          let (x, st') = runState processor st
+          in runState (processorGenerator x) st'
+
+section
+  h4 State
+  pre
+    code.hs.
+      runState (return 'X') 1
+      runState get 1
+      runState (put 5) 1
+      runState (do { put 5; return 'X' }) 1 -- runState (put 5 >>= \_ -> return 'X') 1
+      postincrement :: State Int Int
+      postincrement = do { x <- get; put (x+1); return x }
+
+      runState postincrement 1
+      predecrement = do { x <- get; put (x-1); get }
+
+      runState predecrement 1
+      runState (modify (+1)) 1
+
+      runState (gets (+1)) 1
+      evalState (gets (+1)) 1
+      execState (gets (+1)) 1
+
+section
+  h4 State
+  pre
+    code.hs.
+      return :: a -> State s a
+      return x s = (x,s)
+
+      get :: State s s
+      get s = (s,s)
+
+      put :: s -> State s ()
+      put x s = ((),x)
+
+      modify :: (s -> s) -> State s ()
+      modify f = do { x <- get; put (f x) }
+
+      gets :: (s -> a) -> State s a
+      gets f = do { x <- get; return (f x) }
+
+section
+  h4 State
+  pre
+    code.hs.
+      import Control.Monad.State
+      list2tree xs = evalState (build (length xs)) xs
+      build :: Int -> State [a] (Tree a)
+      build 0 = return Empty
+      build 1 = do
+        x:xs <- get
+        put xs
+        return (Node x Empty Empty)
+      build n = do
+        x:xs <- get
+        put xs
+        let m = div (n-1) 2
+        u <- build m
+        v <- build (n-1-m)
+        return (Node x u v)
+
+section
+  h4 Задание
+  pre
+    code.hs data Tree a = Leaf a | Node (Tree a) (Tree a) ?
+
+section
+  h4 Random
+  pre
+    code.hs.
+      import System.Random
+      import Data.Char
+
+      type GeneratorState = State StdGen
+      type Generator = (GeneratorState Int, GeneratorState Int)
+
+      randomChar :: GeneratorState Char
+      randomChar = do
+      gen <- get
+      let (charInt, newGenerator) = randomR (97, 122) gen
+      put newGenerator
+      return (chr charInt)
+
+      evalState randomChar (mkStdGen 0)
+
+section
+  h4 Random
+  pre
+    code.hs.
+      randomString :: GeneratorState String
+      randomString = do
+        gen <- get
+        let (v10, newGen) = randomR (1, 9) gen :: (Int, StdGen)
+        case v10 of
+          1 -> put newGen >> return []
+          _ -> do
+            let (x, newGen') = runState randomChar newGen
+            let (xs, newGen'') = runState randomString newGen'
+            put newGen''
+            return (x:xs)
