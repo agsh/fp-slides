@@ -339,7 +339,8 @@ section
         putStrLn line
 
       main = do
-        line <- fmap (++ "!") getLine -- line <- fmap ((++ "!") . reverse) getLine
+        line <- fmap (++ "!") getLine
+        -- line <- fmap ((++ "!") . reverse) getLine
         putStrLn line
 
 section
@@ -488,13 +489,12 @@ section
       runState (return 'X') 1
       runState get 1
       runState (put 5) 1
-      runState (do { put 5; return 'X' }) 1 -- runState (put 5 >>= \_ -> return 'X') 1
+      runState (do { put 5; return 'X' }) 1
+      -- runState (put 5 >>= \_ -> return 'X') 1
       postincrement :: State Int Int
       postincrement = do { x <- get; put (x+1); return x }
-
       runState postincrement 1
       predecrement = do { x <- get; put (x-1); get }
-
       runState predecrement 1
       runState (modify (+1)) 1
 
@@ -558,10 +558,10 @@ section
 
       randomChar :: GeneratorState Char
       randomChar = do
-      gen <- get
-      let (charInt, newGenerator) = randomR (97, 122) gen
-      put newGenerator
-      return (chr charInt)
+        gen <- get
+        let (charInt, newGenerator) = randomR (97, 122) gen
+        put newGenerator
+        return (chr charInt)
 
       evalState randomChar (mkStdGen 0)
 
