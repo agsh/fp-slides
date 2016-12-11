@@ -10,6 +10,21 @@ section
   p Это не дерево поиска!
 
 section
+  h4 Деревья
+  pre
+    code.hs.
+      list2tree2 xs = fst (build (length xs) xs)
+
+      build :: Int -> [a] -> (Tree a, [a])
+      build 0 xs = (EmptyTree, xs)
+      build 1 (x:xs) = (Node x EmptyTree EmptyTree, xs)
+      build n (x:xs) = (Node x u v, xs'')
+        where
+        m = div (n-1) 2
+        (u, xs') = build m xs
+        (v, xs'') = build (n-1-m) xs'
+
+section
   h4 Категории
   div
     img(src='./img/11-0.png')
