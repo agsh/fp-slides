@@ -220,13 +220,13 @@ section
       (>>=) :: Maybe a -> (a -> Maybe b) -> Maybe b
 
       hiAll :: Maybe String
-      hiAll = Just “Hello” >>= (\x ->
+      hiAll = Just "Hello" >>= (\x ->
             Just " all" >>= (\y ->
             Just (x ++ y)))
 
       hiAll :: Maybe String
       hiAll = do
-          x <- Just “Hello”
+          x <- Just "Hello"
           y <- Just " all"
           return (x ++ y) -- Just  (x ++ y)
 
@@ -336,7 +336,7 @@ section
       main = do
         line <- getLine
         let line' = (++ "!") line
-        putStrLn line
+        putStrLn line'
 
       main = do
         line <- fmap (++ "!") getLine
