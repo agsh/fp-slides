@@ -184,6 +184,15 @@ section
       > ones = 1 : ones
 
 section
+  h4 Reverse
+  pre
+    code.hs.
+      append' :: [a] -> [a]
+      reverse' [] = []
+      reverse' (x:xs) = reverse' xs ++ [x]
+
+
+section
   h4 KP
   p.
     Функция delete :: Char -> String -> String, которая принимает на вход строку и символ и возвращает

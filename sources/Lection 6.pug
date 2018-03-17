@@ -33,6 +33,9 @@ section
     code.hs.
       union :: Set -> Set -> Set
       union a b = \c -> (contains b c) || (contains a c)
+    code.hs.fragment
+      listSet :: [Int] -> Set
+      listSet list = foldl1 union $ map singletonSet list  
     code.hs.fragment.
       intersect :: Set -> Set -> Set
       intersect a b = \c -> (contains b c) && (contains a c)
