@@ -13,16 +13,23 @@ section
 section
   pre
     code.hs.
+      type Who = String
+      type Year = Int
+      type Month = Int
+      type Day = Int
+      type Where = String
+      type Date = (Year, Month, Day)
       data Anniversary =
-        Birthday String Int Int Int
-        | Wedding String String Int Int Int
-        | Death String Int Int Int
+        Birthday Who Date
+        | Wedding Who Who Date
+        | Death Who Where Date
+        deriving (Show)
 
-      > Birthday "someone" 2012 11 7
-      Birthday "someone" 2012 11 7
-      > let today = Birthday "someone" 2012 11 7
+      > Birthday "someone" (2012, 11, 7)
+      Birthday "someone" (2012, 11, 7)
+      > let today = Birthday "someone" (2012, 11, 7)
       > today
-      Birthday "someone" 2012 11 7
+      Birthday "someone" (2012, 11, 7)
       > :t today
       today :: Anniversary
 
@@ -31,20 +38,20 @@ section
   pre
     code.hs.
       > :t Birthday
-      Birthday :: String -> Int -> Int -> Int -> Anniversary
+      Birthday :: Who -> Date -> Anniversary
 
       > :t Death
-      Birthday :: String -> Int -> Int -> Int -> Anniversary
+      Birthday :: Who -> Where -> Date -> Anniversary
 
 section
   h4 Типы
   pre
     code.hs.
       kurtCobain :: Anniversary
-      kurtCobain = Birthday "Kurt Cobain" 1967 2 20
+      kurtCobain = Birthday "Kurt Cobain" (1967, 2, 20)
 
       kurtWedding :: Anniversary
-      kurtWedding = Wedding "Kurt Cobain" "Courtney Love" 1990 1 12
+      kurtWedding = Wedding "Kurt Cobain" "Courtney Love" (1990, 1, 12)
 
 section
   h4 Типы
@@ -53,7 +60,7 @@ section
       anniversaries = [
         kurtCobain,
         kurtWedding,
-        Death "Kurt Cobain" 1994 4 5
+        Death "Kurt Cobain" "at home" 1994 4 5
       ]
 
 section
@@ -62,8 +69,8 @@ section
     code.hs.
       type AnniversaryBook = [Anniversary]
 
-      showDate :: Int -> Int -> Int -> String
-      showDate y m d = show y ++ "." ++ show m ++ "." ++ show d
+      showDate :: Date -> String
+      showDate (y, m, d) = show y ++ "." ++ show m ++ "." ++ show d
 
 section
   h4 Типы
@@ -71,24 +78,23 @@ section
     code.hs.
       showAnniversary :: Anniversary -> String
 
-      showAnniversary (Birthday name year month day) =
-        name ++ " born " ++ showDate year month day
+      showAnniversary (Birthday name date) =
+        name ++ " born " ++ showDate date
 
-      showAnniversary (Wedding name1 name2 year month day) =
-        name1 ++ " married " ++ name2 ++ " on " ++ showDate
-      year month day
+      showAnniversary (Wedding name1 name2 date) =
+        name1 ++ " married " ++ name2 ++ " on " ++ showDate date
 
-      showAnniversary (Death name year month day) =
-        name ++ " dead in " ++ showDate year month day
+      showAnniversary (Death name where' date) =
+        name ++ " dead in " ++ showDate date ++ " " ++ where'
 
 section
   h4 Типы
   pre
     code.hs.
       who :: Anniversary -> String
-      who (Birthday him _ _ _) = him
-      who (Wedding him _ _ _ _) = him
-      who (Death him _ _ _) = him
+      who (Birthday him _) = him
+      who (Wedding him _ _) = him
+      who (Death him _ _) = him
 
       map who anniversaries
 
