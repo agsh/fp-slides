@@ -244,6 +244,16 @@ section
       foldr1 (const) [1..10000000]  ?
 
 section
+  h4 Свёртки
+  pre
+    code.hs.
+      const2 :: a → b → a
+      const2 a b = b
+
+      foldl1 (const2) [1..10000000]  ?
+      foldr1 (const2) [1..10000000]  ?
+
+section
   h4 Префиксные суммы
   pre
     code.hs.
