@@ -230,6 +230,19 @@ section
       sum list = foldr1 (+) list
 
 section
+  h4 Playground
+  pre
+    code.hs.
+      foldr1'' f list = foldr (\x r -> if r == Nothing then Just x else f x r) Nothing list
+
+      foldr1' f list =
+        let 
+          x = foldr1'' (\x (Just r) -> Just (f x r)) list
+          y (Just a) = a
+        in    
+          y x
+
+section
   h4 Свёртки
   pre
     code.hs.
