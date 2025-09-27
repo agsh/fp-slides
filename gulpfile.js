@@ -1,18 +1,24 @@
-var gulp = require('gulp')
-	, pug = require('gulp-pug')
-	, reveal = require('gulp-revealjs')
-	;
+const gulp = require('gulp');
+const pug = require('gulp-pug');
+const reveal = require('gulp-revealjs');
 
-gulp.task('default', function() {
-	gulp.start('compile', 'images');
-});
+// Compile pug to reveal.js HTML
+function compile() {
+	return gulp.src('sources/*.pug')
+		.pipe(pug({}))
+		.pipe(reveal({ revealOptions: { mouseWheel: true } }))
+		.pipe(gulp.dest('lections/'));
+}
 
-gulp.task('images', () => gulp.src('sources/img/**')
-	.pipe(gulp.dest('lections/img'))
-);
+// Copy images
+function images() {
+	return gulp.src('sources/img/**')
+		.pipe(gulp.dest('lections/img'));
+}
 
-gulp.task('compile', () => gulp.src('sources/*.pug')
-	.pipe(pug({}))
-	.pipe(reveal({revealOptions: {mouseWheel: true}}))
-	.pipe(gulp.dest('lections/'))
-);
+// Default task (runs both compile + images in parallel)
+exports.default = gulp.parallel(compile, images);
+
+// Export individual tasks if needed
+exports.compile = compile;
+exports.images = images;
